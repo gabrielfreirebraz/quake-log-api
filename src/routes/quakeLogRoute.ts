@@ -6,7 +6,7 @@ const QuakeLogRoute = Router();
 const QuakeLog = new QuakeLogController();
 
 
-QuakeLogRoute.get('/api', QuakeLog.parse);
+QuakeLogRoute.get('/parse', QuakeLog.parse);
 
 
 export { QuakeLogRoute };
