@@ -1,4 +1,5 @@
 import fs from 'fs'
+import readline from 'readline'
 import axios from 'axios'
 
 export class QuakeLogModel {
@@ -31,18 +32,35 @@ export class QuakeLogModel {
 
         // Manipula eventos
         writerStream.on('finish', () => {
+
+
+
             console.log('Arquivo baixado com sucesso.');
             // Agora você pode usar fs.createReadStream para ler o arquivo local
 
-            // Crie uma stream de leitura do arquivo de log
-            const readerStream = fs.createReadStream('qgames.log', { encoding: 'utf8' });
+            const file = 'qgames.log'
 
-            // Manipule eventos da stream
-            readerStream.on('data', (chunk: any) => {
-                // Trata cada pedaço (chunk) de dados conforme eles são lidos
-                console.log(chunk);
-                console.log('leu tudo')
+            // Cria uma interface de leitura de linha
+            const leitor = readline.createInterface({
+                input: fs.createReadStream(file, { encoding: 'utf8' }),
+                //output: process.stdout
             });
+            
+            // Manipula o evento 'line', que é acionado quando uma nova linha é lida
+            leitor.on('line', (linha) => {
+                console.log('Linha lida:', linha);
+            });
+            
+            // Manipula o evento 'close', que é acionado quando a leitura do arquivo é concluída
+            leitor.on('close', () => {
+                console.log('Leitura do arquivo concluída.');
+            });
+
+            leitor.on('error', (err) => {
+                // Lida com erros durante a leitura do arquivo
+                console.error('Erro ao ler o arquivo:', err);
+            });
+            
         });
   
         writerStream.on('error', (err) => {
@@ -50,9 +68,6 @@ export class QuakeLogModel {
             console.error('Erro ao escrever o arquivo:', err);
         });
 
-        writerStream.on('end', () => {
-            // Finaliza a leitura do arquivo
-            console.log('Leitura do arquivo concluída.');
-        });
+
     }
 }
