@@ -1,0 +1,23 @@
+# Arquivos de compilação JavaScript
+dist/
+*.js
+*.js.map
+
+# Arquivos de dependências e gerenciamento de pacotes
+node_modules/
+package-lock.json
+yarn.lock
+
+# Arquivos de configuração do ambiente local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Arquivos de log
+*.log
+
+# Outros arquivos específicos do ambiente de desenvolvimento
+.vscode/
+.idea/
