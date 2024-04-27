@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express'
 const app = express();
 
 
-app.get('/', (request: Request, response: Response) => {
+app.get('/api', (request: Request, response: Response) => {
 
     response.status(200).send({message: 'ok'})
 });

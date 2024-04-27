@@ -11,7 +11,8 @@
     "express": "^4.19.2"
   },
   "scripts": {
-    "start": "tsc && node dist/index",
+    "build": "tsc",
+    "start": "node dist/index",
     "dev": "nodemon src/index.ts"
   },
   "name": "parse-quake-log",
