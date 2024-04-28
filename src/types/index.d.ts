@@ -1,5 +1,5 @@
 interface IGames {
-    game: Record<string, IGameRecord>,
+    matchs_game: Record<string, IGameRecord> | null,
 }
 
 interface IGameRecord {
