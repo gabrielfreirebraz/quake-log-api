@@ -6,8 +6,8 @@ export class QuakeLogController {
     async parse(request: Request, response: Response) {
 
         
-        await (new QuakeLogModel()).parseFile();
+        const resp = await (new QuakeLogModel()).parseFile();
 
-        response.status(200).send({message: 'ok'})
+        response.status(200).send(resp)
     }
 }
