@@ -111,46 +111,43 @@ export class QuakeLogModel {
                     //                 }
                     // };
                     const sessionLogsArray = matchHistoryArray[i];
-                    let playersNameArray: string[] = [];
+                    let players: string[] = [];
+                    let total_kills: number = 0;
 
-
-                    sessionLogsArray.reduce((prevValue, currValue, currIdx) => {
-                        //console.log(currValue)
-
-                        currValue = currValue.trimStart(); 
-                        const arr_row = currValue.split(' ') // PAY ATTENTION: only keys 0,1,2 works without troubles
+                    
+                    for (let i = 0; i < sessionLogsArray.length; i++) {
+                        const value = sessionLogsArray[i].trimStart(); 
+                        const arr_row = value.split(' ') // PAY ATTENTION: only keys 0,1,2 works without troubles
                         const eventName = arr_row[1].substring(0, arr_row[1].length - 1)
 
-
-                        if (eventName === 'Kill') {
-
-                        }
-
-
-
-                        // GET PLAYER NAME
-                        if (eventName === 'ClientUserinfoChanged') {
-                            const playerID = arr_row[2];
+                        // SET PLAYER NAME
+                        if (eventName === 'ClientUserinfoChanged') {                            
                             
                             // Regular expression to extract player name
                             const regex = /n\\([^\\]+)/; 
-                            const match = currValue.match(regex);
+                            const match = value.match(regex);
 
                             // check match and get player name
                             const playerName = match ? match[1] : null; 
-                            playersNameArray.push(playerName)
+
+                            // add player name in array
+                            players.push(playerName)
                         }
 
-                        return prevValue + 1;
-                    },0)
-
+                        // SET TOTAL KILLS
+                        if (eventName === 'Kill') {
+                            // const playerID = arr_row[2];
+                            total_kills++;
+                        }
+                    }
                     // remove duplicates values of players name
-                    playersNameArray = [...new Set(playersNameArray)];
+                    players = [...new Set(players)];
+
 
                     gameReportArray[`game_${i+1}`] = {
-                                        "total_kills": 45,
-                                        "players": playersNameArray,
-                                        "kills": {
+                                        total_kills,
+                                        players,
+                                        kills: {
                                             "Dono da bola": 5,
                                             "Isgalamido": 18,
                                             "Zeh": 20
