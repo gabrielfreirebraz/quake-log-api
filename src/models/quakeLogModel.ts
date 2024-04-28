@@ -6,16 +6,6 @@ export class QuakeLogModel {
 
     //private games: IGames | null = null;
 
-    // example
-    // private game_1 = {
-    //     "total_kills": 45,
-    //     "players": ["Dono da bola", "Isgalamido", "Zeh"],
-    //     "kills": {
-    //       "Dono da bola": 5,
-    //       "Isgalamido": 18,
-    //       "Zeh": 20
-    //       }
-    // }
 
     async parseFile() {
 
@@ -87,33 +77,84 @@ export class QuakeLogModel {
                 console.log('Leitura do arquivo concluída.');
                 //console.log(matchHistoryArray)
 
-                let gameReportArray = [];
+                interface IGameMatch {
+                    [key: string]: number | Array<string> | Record<string,number>
+                }
+                // interface IGameMatches<T = Record<string, Array<string> | number | Record<string,number>>, K = Record<string, T>> { 
+                interface IGameMatches<T = IGameMatch> { 
+                    // gameReportArray: K
+                    [key: string]: T
+                }
+
+                let gameReportArray: IGameMatches = {};
 
                 for (let i = 0; i < matchHistoryArray.length; i++) {
                     
-                    
-                    
+                    // let gameReportArray: IGameMatches = {
+                    //                 "game1": {
+                    //                     "total_kills": 45,
+                    //                     "players": ["Dono da bola", "Isgalamido", "Zeh"],
+                    //                     "kills": {
+                    //                         "Dono da bola": 5,
+                    //                         "Isgalamido": 18,
+                    //                         "Zeh": 20
+                    //                     }
+                    //                 },
+                    //                 "game2": {
+                    //                     "total_kills": 45,
+                    //                     "players": ["Dono da bola", "Isgalamido", "Zeh"],
+                    //                     "kills": {
+                    //                         "Dono da bola": 5,
+                    //                         "Isgalamido": 18,
+                    //                         "Zeh": 20
+                    //                     }
+                    //                 }
+                    // };
                     const sessionLogsArray = matchHistoryArray[i];
-
-                    gameReportArray.push({[`game_${i+1}`]: sessionLogsArray})
 
                     sessionLogsArray.reduce((prevValue, currValue, currIdx) => {
                         //console.log(currValue)
 
-                        const arr_row = currValue.split(' ').filter(Boolean) // split without empty or undefined elements
+                        currValue = currValue.trimStart(); 
+                        const arr_row = currValue.split(' ') // PAY ATTENTION: only 0,1 and 2 keys works with troubles  # split without empty or undefined elements
                         const eventName = arr_row[1].substring(0, arr_row[1].length - 1)
 
 
-                        //console.log(eventName);
+                        if (eventName === 'Kill') {
+
+                        }
+                        if (eventName === 'ClientUserinfoChanged') {
+                            const playerID = arr_row[2];
+                            
+                            // Regular expression to extract player name
+                            const regex = /n\\([^\\]+)/; 
+                            const match = currValue.match(regex);
+
+                            // check match and get player name
+                            const playerName = match ? match[1] : null; 
+
+                            const arr = [];
+                            //for (let i = 0; i < playerInfo.length; i++) {
+                                //console.log(playerInfo[i])
+                            //}
+                            console.log('playerName: '+playerName)
+                        }
+                        
 
                         return prevValue + 1;
                     },0)
 
-
-
-                    console.log('key here: '+i)
+                    gameReportArray[`game_${i+1}`] = {
+                                        "total_kills": 45,
+                                        "players": ["Dono da bola", "Isgalamido", "Zeh"],
+                                        "kills": {
+                                            "Dono da bola": 5,
+                                            "Isgalamido": 18,
+                                            "Zeh": 20
+                                        }
+                                    };
                 }
-                console.log(gameReportArray)
+                //console.log(gameReportArray)
 
                 // matchHistoryArray.reduce((previousValue, currentValue, currentIndex) => {
 
