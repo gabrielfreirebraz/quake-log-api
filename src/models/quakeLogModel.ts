@@ -154,6 +154,13 @@ export class QuakeLogModel {
                         // remove duplicates values of players name
                         players = [...new Set(players)];
 
+                        // Preencher o array de kills com jogadores ausentes e valor 0
+                        players.forEach(player => {
+                            if (!(player in kills)) {
+                                kills[player] = 0;
+                            }
+                        });
+
                         // mount report array group
                         this.reportArray[`game_${i+1}`] = { total_kills, players, kills };
                     }
