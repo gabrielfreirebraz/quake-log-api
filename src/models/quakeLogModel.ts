@@ -111,18 +111,24 @@ export class QuakeLogModel {
                     //                 }
                     // };
                     const sessionLogsArray = matchHistoryArray[i];
+                    let playersNameArray: string[] = [];
+
 
                     sessionLogsArray.reduce((prevValue, currValue, currIdx) => {
                         //console.log(currValue)
 
                         currValue = currValue.trimStart(); 
-                        const arr_row = currValue.split(' ') // PAY ATTENTION: only 0,1 and 2 keys works with troubles  # split without empty or undefined elements
+                        const arr_row = currValue.split(' ') // PAY ATTENTION: only keys 0,1,2 works without troubles
                         const eventName = arr_row[1].substring(0, arr_row[1].length - 1)
 
 
                         if (eventName === 'Kill') {
 
                         }
+
+
+
+                        // GET PLAYER NAME
                         if (eventName === 'ClientUserinfoChanged') {
                             const playerID = arr_row[2];
                             
@@ -132,21 +138,18 @@ export class QuakeLogModel {
 
                             // check match and get player name
                             const playerName = match ? match[1] : null; 
-
-                            const arr = [];
-                            //for (let i = 0; i < playerInfo.length; i++) {
-                                //console.log(playerInfo[i])
-                            //}
-                            console.log('playerName: '+playerName)
+                            playersNameArray.push(playerName)
                         }
-                        
 
                         return prevValue + 1;
                     },0)
 
+                    // remove duplicates values of players name
+                    playersNameArray = [...new Set(playersNameArray)];
+
                     gameReportArray[`game_${i+1}`] = {
                                         "total_kills": 45,
-                                        "players": ["Dono da bola", "Isgalamido", "Zeh"],
+                                        "players": playersNameArray,
                                         "kills": {
                                             "Dono da bola": 5,
                                             "Isgalamido": 18,
@@ -154,7 +157,9 @@ export class QuakeLogModel {
                                         }
                                     };
                 }
-                //console.log(gameReportArray)
+
+                console.log(gameReportArray)
+
 
                 // matchHistoryArray.reduce((previousValue, currentValue, currentIndex) => {
 
