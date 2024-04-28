@@ -1,19 +1,13 @@
 import fs from 'fs'
 import readline from 'readline'
 import axios from 'axios'
+import { IGameMatches } from '../@types'
 
-interface IGameMatch {
-    [key: string]: number | Array<string> | Record<string,number>
-}
-// interface IGameMatches<T = Record<string, Array<string> | number | Record<string,number>>, K = Record<string, T>> { 
-interface IGameMatches<T = IGameMatch> { 
-    // gameReportArray: K
-    [key: string]: T
-}
+
 
 export class QuakeLogModel {
 
-    public gameReportArray: IGameMatches = {}
+    public reportArray: IGameMatches = {}
 
 
     async parseFile(): Promise<IGameMatches> {
@@ -46,7 +40,6 @@ export class QuakeLogModel {
                  * ClientUserinfoChanged: loop para pegar nomes dos participantes dentro do game (prop 3)
                  * Kill: loop para pegar total de personagens que determinado personagem matou (prop 4)
                  */
-
 
                 // Manipula o evento 'line', que é acionado quando uma nova linha é lida
                 let lineNumber = 0; // Initialize line number counter
@@ -162,11 +155,10 @@ export class QuakeLogModel {
                         players = [...new Set(players)];
 
                         // mount report array group
-                        this.gameReportArray[`game_${i+1}`] = { total_kills, players, kills };
+                        this.reportArray[`game_${i+1}`] = { total_kills, players, kills };
                     }
 
-                    // console.log(this.gameReportArray)
-                    resolve(this.gameReportArray);
+                    resolve(this.reportArray);
                 });
 
                 leitor.on('error', (err) => {
