@@ -1,7 +1,7 @@
 import fs from 'fs'
 import readline from 'readline'
 import axios from 'axios'
-import { IGameReport } from '../@types'
+import { IGameMatch, IGameReport } from '../@types'
 
 
 
@@ -9,10 +9,35 @@ export class QuakeLogModel {
 
     public reportArray: IGameReport = {}
 
+
+    private generatePlayerRanking(gameData: { [gameId: string]: IGameMatch }): IGameReport {
+        const playerRanking: IGameReport = {};
+
+        // for (const gameId in gameData) {
+        //     const game = gameData[gameId];
+        //     const kills = game.kills;
+    
+        //     for (const player in kills) {
+        //         if (!(player in playerRanking)) {
+        //             playerRanking[player] = 0;
+        //         }
+    
+        //         playerRanking[player] += kills[player];
+        //     }
+        // }
+    
+
+        return playerRanking;
+    }
+
     async parseLogToRanking(): Promise<any> {
-
-
-
+        
+        const r: IGameReport = await this.parseLogToReport();
+        
+        return new Promise<any>((resolve, reject) => {
+            const playerEfficiency = this.generatePlayerRanking(r);
+            resolve(playerEfficiency)
+        });
     }
 
 
