@@ -5,6 +5,6 @@ interface IGameMatch {
     kills: Record<string, number>
 }
 // interface IGameMatches<T = Record<string, Array<string> | number | Record<string,number>>, K = Record<string, T>> { 
-export interface IGameMatches<T = IGameMatch> { 
+export interface IGameReport<T = IGameMatch> { 
     [key: string]: T
 }

@@ -1,26 +1,26 @@
 import fs from 'fs'
 import readline from 'readline'
 import axios from 'axios'
-import { IGameMatches } from '../@types'
+import { IGameReport } from '../@types'
 
 
 
 export class QuakeLogModel {
 
-    public reportArray: IGameMatches = {}
+    public reportArray: IGameReport = {}
 
     async parseLogToRanking(): Promise<any> {
 
 
-        
+
     }
 
 
-    async parseLogToReport(): Promise<IGameMatches> {
+    async parseLogToReport(): Promise<IGameReport> {
         const url = 'https://gist.githubusercontent.com/cloudwalk-tests/be1b636e58abff14088c8b5309f575d8/raw/df6ef4a9c0b326ce3760233ef24ae8bfa8e33940/qgames.log'
         const responseLogs = await axios.get(url, { responseType: 'stream' })
 
-        return new Promise<IGameMatches>((resolve, reject) => {
+        return new Promise<IGameReport>((resolve, reject) => {
 
             // Cria uma stream de escrita para o arquivo local
             const writerStream = fs.createWriteStream('qgames.log', { encoding: 'utf8' });
