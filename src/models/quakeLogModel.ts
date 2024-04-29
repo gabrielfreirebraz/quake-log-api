@@ -9,8 +9,14 @@ export class QuakeLogModel {
 
     public reportArray: IGameMatches = {}
 
+    async parseLogToRanking(): Promise<any> {
 
-    async parseFile(): Promise<IGameMatches> {
+
+        
+    }
+
+
+    async parseLogToReport(): Promise<IGameMatches> {
         const url = 'https://gist.githubusercontent.com/cloudwalk-tests/be1b636e58abff14088c8b5309f575d8/raw/df6ef4a9c0b326ce3760233ef24ae8bfa8e33940/qgames.log'
         const responseLogs = await axios.get(url, { responseType: 'stream' })
 
@@ -64,32 +70,20 @@ export class QuakeLogModel {
                     lineNumber++;
                 });
                 
-                // Manipula o evento 'close', que é acionado quando a leitura do arquivo é concluída
+                // Event 'close', act when a read file has done
                 leitor.on('close', () => {
                     console.log('Leitura do arquivo concluída.');
 
                     for (let i = 0; i < matchHistoryArray.length; i++) {
                         
-                        // let gameReportArray: IGameMatches = {
-                        //                 "game1": {
-                        //                     "total_kills": 45,
-                        //                     "players": ["Dono da bola", "Isgalamido", "Zeh"],
-                        //                     "kills": {
-                        //                         "Dono da bola": 5,
-                        //                         "Isgalamido": 18,
-                        //                         "Zeh": 20
-                        //                     }
-                        //                 },
-                        //                 "game2": {
-                        //                     "total_kills": 45,
-                        //                     "players": ["Dono da bola", "Isgalamido", "Zeh"],
-                        //                     "kills": {
-                        //                         "Dono da bola": 5,
-                        //                         "Isgalamido": 18,
-                        //                         "Zeh": 20
-                        //                     }
-                        //                 }
-                        // };
+                        /**
+                            Additional notes:
+
+                            When <world> kill a player, that player loses -1 kill score.
+                            Since <world> is not a player, it should not appear in the list of players or in the dictionary of kills.
+                            The counter total_kills includes player and world deaths.
+                         */
+
                         const sessionLogsArray = matchHistoryArray[i];
                         let players: string[] = [];
                         let kills: Record<string, number> = {};
@@ -98,7 +92,7 @@ export class QuakeLogModel {
                         
                         for (let i = 0; i < sessionLogsArray.length; i++) {
                             const log = sessionLogsArray[i].trimStart(); 
-                            const arr_row = log.split(' ') // PAY ATTENTION: only keys 0,1,2 works without troubles
+                            const arr_row = log.split(' ') // PAY ATTENTION: only log keys 0,1,2 works without troubles
                             const eventName = arr_row[1].substring(0, arr_row[1].length - 1)
 
                             // SET PLAYER NAME
@@ -111,7 +105,7 @@ export class QuakeLogModel {
                                 // check match and get player name
                                 const playerName = match ? match[1] : null; 
 
-                                // add player name in array
+                                // add player name in array                                
                                 players.push(playerName)
                             }
 
@@ -141,12 +135,14 @@ export class QuakeLogModel {
                                     // Verificar se houve uma correspondência e pegar o nome do jogador que morreu
                                     const deadName = match ? match[1] : null;
                                     
+                                    // When <world> kill a player, that player loses -1 kill score.
                                     if (typeof kills[`${deadName}`] === 'undefined') {
                                         kills[`${deadName}`] = -1;
                                     } else {
                                         kills[`${deadName}`]--;
                                     }
                                 }
+                                
                                 total_kills++;
                             }
                         }

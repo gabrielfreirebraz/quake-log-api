@@ -6,7 +6,8 @@ const QuakeLogRoute = Router();
 const QuakeLog = new QuakeLogController();
 
 
-QuakeLogRoute.get('/parse', QuakeLog.parse);
+QuakeLogRoute.get('/report', QuakeLog.parseLogToReport);
+QuakeLogRoute.get('/ranking', QuakeLog.parseLogToRanking);
 
 
 export { QuakeLogRoute };

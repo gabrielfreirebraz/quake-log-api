@@ -3,9 +3,16 @@ import { QuakeLogModel } from '../models/quakeLogModel'
 
 export class QuakeLogController {
 
-    async parse(request: Request, response: Response) {
+    async parseLogToReport(request: Request, response: Response) {
         
-        const resp = await (new QuakeLogModel()).parseFile();
+        const resp = await (new QuakeLogModel()).parseLogToReport();
+
+        response.status(200).send(resp)
+    }
+
+    async parseLogToRanking(request: Request, response: Response) {
+        
+        const resp = await (new QuakeLogModel()).parseLogToRanking();
 
         response.status(200).send(resp)
     }
