@@ -2,6 +2,7 @@ import fs from 'fs'
 import readline from 'readline'
 import axios from 'axios'
 import { IGameMatch, IGameReport } from '../@types'
+import { sortObjectByKey } from '../utils/sortObject'
 
 
 
@@ -129,31 +130,19 @@ export class QuakeLogModel {
                                 players.push(playerName)
                             }
 
-                            // SET TOTAL KILLS && KILLERS
+                            // SET TOTAL KILLS && KILLERS && DEADS
                             if (log.includes('Kill')) {
 
-                                // Regular expression to extract player name that is killer
-                                const regex = /Kill: (\d+) (\d+) \d+: (.+?) killed/;
-                                const match = log.match(regex);
+                                // Regular expression to extract the player name who has killed another player
+                                const killerMatch = log.match(/Kill: (\d+) (\d+) \d+: (.+?) killed/);
+                                const killerName = killerMatch ? killerMatch[3] : null;
 
-                                // Verificar se houve uma correspondência e pegar o nome do jogador que matou
-                                const killerName = match ? match[3] : null;
+                                // Regular expression to extract the player name who has died
+                                const deadMatch = log.match(/killed\s+(.*?)\s+by/);
+                                const deadName = deadMatch ? deadMatch[1] : null;
 
-                                if (killerName !== '<world>') {
-                                    
-                                    if (typeof kills[`${killerName}`] === 'undefined') {
-                                        kills[`${killerName}`] = 1;
-                                    } else {
-                                        kills[`${killerName}`]++;
-                                    }
-                                } else {
-
-                                    // Usar expressão regular para extrair o nome do jogador que morreu
-                                    const regex = /killed\s+(.*?)\s+by/;
-                                    const match = log.match(regex);
-
-                                    // Verificar se houve uma correspondência e pegar o nome do jogador que morreu
-                                    const deadName = match ? match[1] : null;
+                                
+                                if (killerName === '<world>') {
                                     
                                     // When <world> kill a player, that player loses -1 kill score.
                                     if (typeof kills[`${deadName}`] === 'undefined') {
@@ -161,7 +150,20 @@ export class QuakeLogModel {
                                     } else {
                                         kills[`${deadName}`]--;
                                     }
-                                }                                
+
+                                } else {
+                                    if (typeof kills[`${killerName}`] === 'undefined') {
+                                        kills[`${killerName}`] = 1;
+                                    } else {
+                                        kills[`${killerName}`]++;
+                                    }                                    
+                                }    
+                                
+                                if (typeof deaths[`${deadName}`] === 'undefined') {
+                                    deaths[`${deadName}`] = 1;
+                                } else {
+                                    deaths[`${deadName}`]++;
+                                }
                                 
                                 total_kills++;
                             }
@@ -175,10 +177,16 @@ export class QuakeLogModel {
                             if (!(player in kills)) {
                                 kills[player] = 0;
                             }
+                            if (!(player in deaths)) {
+                                deaths[player] = 0;
+                            }
                         });
 
+                        kills  = sortObjectByKey(kills);
+                        deaths = sortObjectByKey(deaths);
+
                         // mount report array group
-                        this.reportArray[`game_${i+1}`] = { total_kills, players, kills };
+                        this.reportArray[`game_${i+1}`] = { total_kills, players, kills, deaths };
                     }
 
                     resolve(this.reportArray);
