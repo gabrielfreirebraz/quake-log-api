@@ -112,16 +112,15 @@ export class QuakeLogModel {
                         const sessionLogsArray = matchHistoryArray[i];
                         let players: string[] = [];
                         let kills: Record<string, number> = {};
+                        let deaths: Record<string, number> = {};
                         let total_kills: number = 0;
 
                         
                         for (let i = 0; i < sessionLogsArray.length; i++) {
                             const log = sessionLogsArray[i].trimStart(); 
-                            const arr_row = log.split(' ') // PAY ATTENTION: only log keys 0,1,2 works without troubles
-                            const eventName = arr_row[1].substring(0, arr_row[1].length - 1)
 
                             // SET PLAYER NAME
-                            if (eventName === 'ClientUserinfoChanged') {                            
+                            if (log.includes('ClientUserinfoChanged')) {                            
                                 
                                 // Regular expression to extract player name
                                 const regex = /n\\([^\\]+)/; 
@@ -135,7 +134,7 @@ export class QuakeLogModel {
                             }
 
                             // SET TOTAL KILLS && KILLERS
-                            if (eventName === 'Kill') {
+                            if (log.includes('Kill')) {
 
                                 // Regular expression to extract player name that is killer
                                 const regex = /Kill: (\d+) (\d+) \d+: (.+?) killed/;
@@ -166,7 +165,7 @@ export class QuakeLogModel {
                                     } else {
                                         kills[`${deadName}`]--;
                                     }
-                                }
+                                }                                
                                 
                                 total_kills++;
                             }
