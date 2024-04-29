@@ -78,19 +78,15 @@ export class QuakeLogModel {
                 const matchHistoryArray: any[][] = [];
                 let eachMatchArray: any = [];
                 
-                leitor.on('line', (row) => {
+                leitor.on('line', (log) => {
 
-                    const arrRow = row.split(' ').filter(Boolean); // split without empty or undefined elements
-                    const eventTimestamp = arrRow[0]
-                    const eventName = arrRow[1]
-
-                    if (eventName === 'ShutdownGame:') {
+                    if (log.includes('ShutdownGame')) {
                         matchHistoryArray.push(eachMatchArray)
                         eachMatchArray = [];
                     } 
-                    else if (eventName !== 'InitGame:') {
+                    else if (!log.includes('InitGame')) {
 
-                        eachMatchArray.push(row);      
+                        eachMatchArray.push(log);      
                     }                        
                     lineNumber++;
                 });
