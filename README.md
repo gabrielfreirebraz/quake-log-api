@@ -12,3 +12,15 @@ Project to parse the Quake log file.
 ```bash 
 docker-compose up -d
 ```
+
+### Endpoints
+
+Request to see Game Report:
+
+GET: **http://localhost:3000/api/report**  
+--    
+
+Request to see Player Ranking:
+
+GET: **http://localhost:3000/api/ranking**  
+--    
