@@ -2,7 +2,8 @@
 type TypePercentage = `${number}%`;
 
 interface IRanking {
-    [player: string]: number | TypePercentage
+    // [player: string]: number | TypePercentage
+    [player: string]: number
 }
 interface IPlayerRanking {
     playerRanking: Record<string, IRanking>

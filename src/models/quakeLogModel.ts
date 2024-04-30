@@ -2,7 +2,7 @@ import fs from 'fs'
 import readline from 'readline'
 import axios from 'axios'
 import { IGameMatch, IGameReport, IPlayerRanking } from '../@types'
-import { isEmptyObject, sortObjectByKey } from '../utils/object'
+import { isEmptyObject, sortObjectByKey, sortObjectByValue } from '../utils/object'
 
 
 
@@ -13,36 +13,29 @@ export class QuakeLogModel {
 
     async playerRanking<T>(): Promise<IPlayerRanking> {
 
-        const report: IGameReport = isEmptyObject(this.reportArray) ? await this.logReport() : this.reportArray;
+        const logReport: IGameReport = isEmptyObject(this.reportArray) ? await this.logReport() : this.reportArray;
         
         return new Promise<IPlayerRanking>((resolve, reject) => {
 
-            const ranking: IPlayerRanking = { playerRanking: {} };
-        
-            ranking['playerRanking']['kills'] = {};
-            ranking['playerRanking']['score'] = {};
+            const ranking: IPlayerRanking = { playerRanking: { "kills": {} } };
+            let playerRankingKills = ranking['playerRanking']['kills'];
 
+            for (const i in logReport) {
 
-            for (const i in report) {
-                console.log(i)
+                const game = logReport[i]
+                const kills = game.kills;
+
+                for (const player in kills) {
+
+                    if (!(player in playerRankingKills) ) {
+                        playerRankingKills[player] = 0;    
+                    }
+                    playerRankingKills[player] += kills[player];
+                }
             }
 
-
-            // const playerRanking: T = {};
-
-            // for (const gameId in gameData) {
-            //     const game = gameData[gameId];
-            //     const kills = game.kills;
-        
-            //     for (const player in kills) {
-            //         if (!(player in playerRanking)) {
-            //             playerRanking[player] = 0;
-            //         }
-        
-            //         playerRanking[player] += kills[player];
-            //     }
-            // }
-
+            ranking['playerRanking']['kills'] = sortObjectByValue(playerRankingKills);
+              
             resolve(ranking);
         });
     }
