@@ -13,3 +13,7 @@ export function sortObjectByKey<T>(originalObject: {[key: string]: T}): {[key: s
 
     return sortedObject;
 }
+
+export function isEmptyObject(obj: any): boolean {
+    return Object.keys(obj).length === 0;
+}

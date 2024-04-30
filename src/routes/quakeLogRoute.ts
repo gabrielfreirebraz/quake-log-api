@@ -2,12 +2,10 @@ import { Router } from 'express'
 import { QuakeLogController } from '../controllers/quakeLogController';
 
 const QuakeLogRoute = Router();
+const Controller = new QuakeLogController();
 
-const QuakeLog = new QuakeLogController();
-
-
-QuakeLogRoute.get('/report', QuakeLog.parseLogToReport);
-QuakeLogRoute.get('/ranking', QuakeLog.parseLogToRanking);
+QuakeLogRoute.get('/report', Controller.logReport);
+QuakeLogRoute.get('/ranking', Controller.playerRanking);
 
 
 export { QuakeLogRoute };

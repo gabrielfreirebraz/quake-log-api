@@ -1,48 +1,53 @@
 import fs from 'fs'
 import readline from 'readline'
 import axios from 'axios'
-import { IGameMatch, IGameReport } from '../@types'
-import { sortObjectByKey } from '../utils/sortObject'
+import { IGameMatch, IGameReport, IPlayerRanking } from '../@types'
+import { isEmptyObject, sortObjectByKey } from '../utils/object'
 
 
 
 export class QuakeLogModel {
 
-    public reportArray: IGameReport = {}
+    protected reportArray: IGameReport = {}
 
 
-    private generatePlayerRanking(gameData: { [gameId: string]: IGameMatch }): IGameReport {
-        const playerRanking: IGameReport = {};
+    async playerRanking<T>(): Promise<IPlayerRanking> {
 
-        // for (const gameId in gameData) {
-        //     const game = gameData[gameId];
-        //     const kills = game.kills;
-    
-        //     for (const player in kills) {
-        //         if (!(player in playerRanking)) {
-        //             playerRanking[player] = 0;
-        //         }
-    
-        //         playerRanking[player] += kills[player];
-        //     }
-        // }
-    
-
-        return playerRanking;
-    }
-
-    async parseLogToRanking(): Promise<any> {
+        const report: IGameReport = isEmptyObject(this.reportArray) ? await this.logReport() : this.reportArray;
         
-        const r: IGameReport = await this.parseLogToReport();
+        return new Promise<IPlayerRanking>((resolve, reject) => {
+
+            const ranking: IPlayerRanking = { playerRanking: {} };
         
-        return new Promise<any>((resolve, reject) => {
-            const playerEfficiency = this.generatePlayerRanking(r);
-            resolve(playerEfficiency)
+            ranking['playerRanking']['kills'] = {};
+            ranking['playerRanking']['score'] = {};
+
+
+            for (const i in report) {
+                console.log(i)
+            }
+
+
+            // const playerRanking: T = {};
+
+            // for (const gameId in gameData) {
+            //     const game = gameData[gameId];
+            //     const kills = game.kills;
+        
+            //     for (const player in kills) {
+            //         if (!(player in playerRanking)) {
+            //             playerRanking[player] = 0;
+            //         }
+        
+            //         playerRanking[player] += kills[player];
+            //     }
+            // }
+
+            resolve(ranking);
         });
     }
 
-
-    async parseLogToReport(): Promise<IGameReport> {
+    async logReport(): Promise<IGameReport> {
         const url = 'https://gist.githubusercontent.com/cloudwalk-tests/be1b636e58abff14088c8b5309f575d8/raw/df6ef4a9c0b326ce3760233ef24ae8bfa8e33940/qgames.log'
         const responseLogs = await axios.get(url, { responseType: 'stream' })
 
