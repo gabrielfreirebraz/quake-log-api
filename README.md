@@ -17,10 +17,8 @@ docker-compose up -d
 
 Request to see Game Report:
 
-GET: **http://localhost:3000/api/report**  
---    
+GET: **http://localhost:3000/api/report**      
 
 Request to see Player Ranking:
 
-GET: **http://localhost:3000/api/ranking**  
---    
+GET: **http://localhost:3000/api/ranking**      
