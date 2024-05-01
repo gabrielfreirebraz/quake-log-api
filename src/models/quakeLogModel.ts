@@ -1,7 +1,7 @@
 import fs from 'fs'
 import readline from 'readline'
 import axios from 'axios'
-import { IGameMatch, IGameReport, IPlayerRanking } from '../@types'
+import { IGameReport, IPlayerRanking, IRanking, TypePercentage } from '../@types'
 import { isEmptyObject, sortObjectByKey, sortObjectByValue } from '../utils/object'
 
 
@@ -10,6 +10,43 @@ export class QuakeLogModel {
 
     protected reportArray: IGameReport = {}
 
+
+    calculateStandardEfficiency(games: IGameReport): IRanking<TypePercentage> {
+        const playerStats: { [player: string]: { kills: number, deaths: number } } = {};
+      
+        // Aggregate kills and deaths for each player across all games
+        for (const gameKey in games) {
+          const game = games[gameKey];
+          game.players.forEach(player => {
+            if (!playerStats[player]) {
+              playerStats[player] = { kills: 0, deaths: 0 };
+            }
+      
+            const kills = game.kills[player] ?? 0;
+            const deaths = game.deaths[player] ?? 0;
+      
+            // Adjust negative kills to zero
+            playerStats[player].kills += Math.max(0, kills);
+            playerStats[player].deaths += deaths;
+          });
+        }
+      
+        // Calculate efficiency as kills/deaths ratio for each player, convert to percentage and format as string
+        const efficiencies: IRanking<TypePercentage> = {};
+        for (const player in playerStats) {
+          const stats = playerStats[player];
+          if (stats.deaths === 0) {
+            efficiencies[player] = 'Infinity%'; // Infinite efficiency if no deaths
+          } else {
+            const efficiency = (stats.kills / stats.deaths) * 100; // Convert to percentage
+            const formattedEfficiency: TypePercentage = Number.isInteger(efficiency) ? 
+              `${efficiency}%` : `${efficiency.toFixed(2)}%`; // Remove decimal places if integer
+            efficiencies[player] = formattedEfficiency;
+          }
+        }
+      
+        return efficiencies;
+      }
 
     async playerRanking<T>(): Promise<IPlayerRanking> {
 
@@ -36,6 +73,10 @@ export class QuakeLogModel {
 
             ranking['playerRanking']['kills'] = sortObjectByValue(playerRankingKills);
               
+            const playerEfficiencies = this.calculateStandardEfficiency(logReport);
+
+            ranking['playerRanking']['efficiency'] = playerEfficiencies;
+
             resolve(ranking);
         });
     }
