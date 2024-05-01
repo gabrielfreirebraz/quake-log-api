@@ -4,12 +4,7 @@ import axios from 'axios'
 import { IGameReport, IPlayerRanking, IRanking, TypePercentage } from '../@types'
 import { isEmptyObject, sortObjectByKey, sortObjectByValue } from '../utils/object'
 
-interface GameData {
-    total_kills: number;
-    players: string[];
-    kills: { [key: string]: number };
-    deaths: { [key: string]: number };
-  }
+
 
 export class QuakeLogModel {
 
@@ -72,8 +67,8 @@ export class QuakeLogModel {
 
 
 
-    rankPlayersByDeaths(games: { [key: string]: GameData }): { [player: string]: number } {
-        const deathStats: { [player: string]: number } = {};
+    rankPlayersByDeaths(games: IGameReport): IRanking<number> {
+        const deathStats: IRanking<number> = {};
       
         // Aggregate deaths for each player across all games
         Object.values(games).forEach(game => {
