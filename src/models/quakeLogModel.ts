@@ -11,7 +11,7 @@ export class QuakeLogModel {
     protected reportArray: IGameReport = {}
 
 
-    calculateStandardEfficiency(games: IGameReport): IRanking<TypePercentage> {
+    calculateStandardEfficiency(games: IGameReport): IRanking<TypePercentage> | any {
         const playerStats: { [player: string]: { kills: number, deaths: number } } = {};
       
         // Aggregate kills and deaths for each player across all games
@@ -33,19 +33,37 @@ export class QuakeLogModel {
       
         // Calculate efficiency as kills/deaths ratio for each player, convert to percentage and format as string
         const efficiencies: IRanking<TypePercentage> = {};
+        const tempSortableEfficiencies: { player: string, efficiency: number }[] = [];
+        // const tempSortableEfficiencies: IRanking<number> = {};
+
         for (const player in playerStats) {
           const stats = playerStats[player];
+          let efficiency;
+
           if (stats.deaths === 0) {
             efficiencies[player] = 'Infinity%'; // Infinite efficiency if no deaths
+            efficiency = Infinity;
+
           } else {
-            const efficiency = (stats.kills / stats.deaths) * 100; // Convert to percentage
+            efficiency = (stats.kills / stats.deaths) * 100; // Convert to percentage
             const formattedEfficiency: TypePercentage = Number.isInteger(efficiency) ? 
               `${efficiency}%` : `${efficiency.toFixed(2)}%`; // Remove decimal places if integer
             efficiencies[player] = formattedEfficiency;
           }
+          tempSortableEfficiencies.push({ player, efficiency });
+
         }
+
+        // Sort players by efficiency in descending order
+        tempSortableEfficiencies.sort((a, b) => b.efficiency - a.efficiency);
+
+        // Create a sorted object based on efficiency
+        const sortedEfficiencies: IRanking<TypePercentage> = {};
+        tempSortableEfficiencies.forEach(item => {
+            sortedEfficiencies[item.player] = efficiencies[item.player];
+        });
       
-        return efficiencies;
+        return sortedEfficiencies;
       }
 
     async playerRanking<T>(): Promise<IPlayerRanking> {
