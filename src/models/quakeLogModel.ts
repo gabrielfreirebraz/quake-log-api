@@ -4,7 +4,12 @@ import axios from 'axios'
 import { IGameReport, IPlayerRanking, IRanking, TypePercentage } from '../@types'
 import { isEmptyObject, sortObjectByKey, sortObjectByValue } from '../utils/object'
 
-
+interface GameData {
+    total_kills: number;
+    players: string[];
+    kills: { [key: string]: number };
+    deaths: { [key: string]: number };
+  }
 
 export class QuakeLogModel {
 
@@ -34,7 +39,6 @@ export class QuakeLogModel {
         // Calculate efficiency as kills/deaths ratio for each player, convert to percentage and format as string
         const efficiencies: IRanking<TypePercentage> = {};
         const tempSortableEfficiencies: { player: string, efficiency: number }[] = [];
-        // const tempSortableEfficiencies: IRanking<number> = {};
 
         for (const player in playerStats) {
           const stats = playerStats[player];
@@ -64,7 +68,37 @@ export class QuakeLogModel {
         });
       
         return sortedEfficiencies;
-      }
+    }
+
+
+
+    rankPlayersByDeaths(games: { [key: string]: GameData }): { [player: string]: number } {
+        const deathStats: { [player: string]: number } = {};
+      
+        // Aggregate deaths for each player across all games
+        Object.values(games).forEach(game => {
+          game.players.forEach(player => {
+            if (!deathStats[player]) {
+              deathStats[player] = 0; // Initialize if not already present
+            }
+            const deaths = game.deaths[player] ?? 0;
+            deathStats[player] += deaths; // Sum up deaths
+          });
+        });
+      
+        // Sort the entries by deaths in ascending order and rebuild the object
+        const sortedPlayers = Object.entries(deathStats)
+          .sort((a, b) => a[1] - b[1])
+          .reduce<{ [player: string]: number }>((obj, [player, deaths]) => {
+            obj[player] = deaths;
+            return obj;
+          }, {});
+      
+        return sortedPlayers;
+    }
+      
+
+
 
     async playerRanking<T>(): Promise<IPlayerRanking> {
 
@@ -72,7 +106,7 @@ export class QuakeLogModel {
         
         return new Promise<IPlayerRanking>((resolve, reject) => {
 
-            const ranking: IPlayerRanking = { playerRanking: { "kills": {} } };
+            const ranking: IPlayerRanking = { playerRanking: { "kills": {}, "deaths": {}, "efficiency": {} } };
             let playerRankingKills = ranking['playerRanking']['kills'];
 
             for (const i in logReport) {
@@ -89,11 +123,9 @@ export class QuakeLogModel {
                 }
             }
 
-            ranking['playerRanking']['kills'] = sortObjectByValue(playerRankingKills);
-              
-            const playerEfficiencies = this.calculateStandardEfficiency(logReport);
-
-            ranking['playerRanking']['efficiency'] = playerEfficiencies;
+            ranking['playerRanking']['kills'] = sortObjectByValue(playerRankingKills);              
+            ranking['playerRanking']['deaths'] = this.rankPlayersByDeaths(logReport);
+            ranking['playerRanking']['efficiency'] = this.calculateStandardEfficiency(logReport);
 
             resolve(ranking);
         });
