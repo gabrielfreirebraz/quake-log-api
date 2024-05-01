@@ -11,7 +11,7 @@ export class QuakeLogModel {
     protected reportArray: IGameReport = {}
 
 
-    calculateStandardEfficiency(games: IGameReport): IRanking<TypePercentage> | any {
+    calculateStandardEfficiency(games: IGameReport): IRanking<TypePercentage> {
         const playerStats: { [player: string]: { kills: number, deaths: number } } = {};
       
         // Aggregate kills and deaths for each player across all games
@@ -65,8 +65,6 @@ export class QuakeLogModel {
         return sortedEfficiencies;
     }
 
-
-
     rankPlayersByDeaths(games: IGameReport): IRanking<number> {
         const deathStats: IRanking<number> = {};
       
@@ -91,9 +89,6 @@ export class QuakeLogModel {
       
         return sortedPlayers;
     }
-      
-
-
 
     async playerRanking<T>(): Promise<IPlayerRanking> {
 
