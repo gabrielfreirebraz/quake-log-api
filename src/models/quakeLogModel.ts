@@ -5,10 +5,6 @@ import { IGameMatch, IGameReport, IPlayerRanking, IRanking } from '../@types'
 import { isEmptyObject, sortObjectByKey, sortObjectByValue } from '../utils/object'
 
 
-interface PlayerStats {
-    kdRatio: number;
-    totalKills: number;
-}
 
 export class QuakeLogModel {
 
@@ -27,7 +23,7 @@ export class QuakeLogModel {
         return sortObjectByValue(scores);
     }
 
-    calculatePlayerScore(playerStats: PlayerStats, weightFactor: number = 10): number {
+    calculatePlayerScore(playerStats: { kdRatio: number; totalKills: number; }, weightFactor: number = 10): number {
         return parseFloat(((playerStats.kdRatio * weightFactor) + playerStats.totalKills).toFixed(2));
     }
     
