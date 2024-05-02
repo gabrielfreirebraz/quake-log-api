@@ -14,6 +14,19 @@ export class QuakeLogModel {
 
     protected reportArray: IGameReport = {}
 
+    calculatePlayerScoreAll({ playerRanking }: IPlayerRanking): IRanking<number> {
+        const scores: { [player: string]: number } = {};
+
+        Object.keys(playerRanking.kills).forEach(player => {
+            const totalKills = playerRanking.kills[player];
+            const kdRatio = playerRanking.kd_ratio[player];
+            const score = this.calculatePlayerScore({kdRatio, totalKills});
+            scores[player] = score;
+        });
+
+        return sortObjectByValue(scores);
+    }
+
     calculatePlayerScore(playerStats: PlayerStats, weightFactor: number = 10): number {
         return parseFloat(((playerStats.kdRatio * weightFactor) + playerStats.totalKills).toFixed(2));
     }
@@ -79,7 +92,7 @@ export class QuakeLogModel {
         
         return new Promise<IPlayerRanking>((resolve, reject) => {
 
-            const ranking: IPlayerRanking = { playerRanking: { "kills": {}, "deaths": {}, "kd_ratio": {} } };
+            const ranking: IPlayerRanking = { playerRanking: { "kills": {}, "deaths": {}, "kd_ratio": {}, "player_score": {} } };
             let playerRankingKills = ranking['playerRanking']['kills'];
 
             for (const i in logReport) {
@@ -99,6 +112,7 @@ export class QuakeLogModel {
             ranking['playerRanking']['kills'] = sortObjectByValue(playerRankingKills);              
             ranking['playerRanking']['deaths'] = this.rankPlayersByDeaths(logReport);
             ranking['playerRanking']['kd_ratio'] = this.calculateStandardEfficiency(logReport);
+            ranking['playerRanking']['player_score'] = this.calculatePlayerScoreAll(ranking);
 
             resolve(ranking);
         });
