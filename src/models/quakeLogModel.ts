@@ -33,8 +33,10 @@ export class QuakeLogModel {
                 playerEfficiency[player] = totalKills > 0 ? parseFloat(totalKills.toFixed(2)) : 0; // Se não houver mortes, retorna kills como número ou 0
             }
         });
+        
+        const sortedPlayers = sortObjectByValue(playerEfficiency);
     
-        return playerEfficiency;
+        return sortedPlayers;
     }
 
     rankPlayersByDeaths(games: IGameReport): IRanking<number> {
@@ -106,7 +108,8 @@ export class QuakeLogModel {
                 game.scoreKD[player] = parseFloat(kills.toFixed(2)); // Direto como número de kills, mesmo que zero
             }
         });
-        return game.scoreKD;
+        const sortedValues = sortObjectByValue(game.scoreKD);
+        return sortedValues;
     }
 
     async logReport(): Promise<IGameReport> {
