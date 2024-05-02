@@ -12,7 +12,8 @@ interface IGameMatch {
     players: Array<string>,
     kills: Record<string, number>,
     deaths: Record<string, number>,
-    scoreKD: Record<string, number>
+    kd_ratio: Record<string, number>,
+    player_score: Record<string, number>
 }
 interface IGameReport<T = IGameMatch> { 
     [key: string]: T

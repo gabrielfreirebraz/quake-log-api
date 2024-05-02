@@ -5,10 +5,19 @@ import { IGameMatch, IGameReport, IPlayerRanking, IRanking } from '../@types'
 import { isEmptyObject, sortObjectByKey, sortObjectByValue } from '../utils/object'
 
 
+interface PlayerStats {
+    kdRatio: number;
+    totalKills: number;
+}
+
 export class QuakeLogModel {
 
     protected reportArray: IGameReport = {}
 
+    calculatePlayerScore(playerStats: PlayerStats, weightFactor: number = 10): number {
+        return parseFloat(((playerStats.kdRatio * weightFactor) + playerStats.totalKills).toFixed(2));
+    }
+    
     calculateStandardEfficiency(games: IGameReport): IRanking<number> {
         const playerStats: { [key: string]: { totalKills: number; totalDeaths: number } } = {};
         const playerEfficiency: IRanking<number> = {};
@@ -70,7 +79,7 @@ export class QuakeLogModel {
         
         return new Promise<IPlayerRanking>((resolve, reject) => {
 
-            const ranking: IPlayerRanking = { playerRanking: { "kills": {}, "deaths": {}, "scoreKD": {} } };
+            const ranking: IPlayerRanking = { playerRanking: { "kills": {}, "deaths": {}, "kd_ratio": {} } };
             let playerRankingKills = ranking['playerRanking']['kills'];
 
             for (const i in logReport) {
@@ -89,26 +98,26 @@ export class QuakeLogModel {
 
             ranking['playerRanking']['kills'] = sortObjectByValue(playerRankingKills);              
             ranking['playerRanking']['deaths'] = this.rankPlayersByDeaths(logReport);
-            ranking['playerRanking']['scoreKD'] = this.calculateStandardEfficiency(logReport);
+            ranking['playerRanking']['kd_ratio'] = this.calculateStandardEfficiency(logReport);
 
             resolve(ranking);
         });
     }
 
     calculateEfficiency(game: IGameMatch): Record<string, number> {
-        game.scoreKD = {}; // Inicializa a nova propriedade no objeto do jogo
+        game.kd_ratio = {}; // Inicializa a nova propriedade no objeto do jogo
         game.players.forEach(player => {
             const kills = Math.max(game.kills[player], 0); // Ajusta kills negativas para zero
             const deaths = game.deaths[player];
     
             if (deaths > 0) {
-                game.scoreKD[player] = parseFloat((kills / deaths).toFixed(2)); // Resultado com duas casas decimais
+                game.kd_ratio[player] = parseFloat((kills / deaths).toFixed(2)); // Resultado com duas casas decimais
             } else {
                 // Se não houver mortes, ainda usamos kills como referência para desempenho
-                game.scoreKD[player] = parseFloat(kills.toFixed(2)); // Direto como número de kills, mesmo que zero
+                game.kd_ratio[player] = parseFloat(kills.toFixed(2)); // Direto como número de kills, mesmo que zero
             }
         });
-        const sortedValues = sortObjectByValue(game.scoreKD);
+        const sortedValues = sortObjectByKey(game.kd_ratio);
         return sortedValues;
     }
 
@@ -181,7 +190,8 @@ export class QuakeLogModel {
                         let kills: Record<string, number> = {};
                         let deaths: Record<string, number> = {};
                         let total_kills: number = 0;
-                        let scoreKD: Record<string, number> = {};
+                        let kd_ratio: Record<string, number> = {};
+                        let player_score: Record<string, number> = {};
 
                         
                         for (let i = 0; i < sessionLogsArray.length; i++) {
@@ -259,13 +269,25 @@ export class QuakeLogModel {
                         deaths = sortObjectByKey(deaths);
 
                         // mount report array group
-                        this.reportArray[`game_${i+1}`] = { total_kills, players, kills, deaths, scoreKD };
+                        this.reportArray[`game_${i+1}`] = { total_kills, players, kills, deaths, kd_ratio, player_score };
 
                         // 
-                        scoreKD = this.calculateEfficiency(this.reportArray[`game_${i+1}`]);
+                        kd_ratio = this.calculateEfficiency(this.reportArray[`game_${i+1}`]);
 
-                        this.reportArray[`game_${i+1}`].scoreKD = scoreKD;
+                        this.reportArray[`game_${i+1}`].kd_ratio = kd_ratio;
 
+
+
+                        // calc score
+                        for (const player in kd_ratio) {
+                            const kd_ratioByPlayer = kd_ratio[player];
+                            const total_killsByPlayers = kills[player] >= 0 ? kills[player] : 0;
+
+                            player_score[player] = this.calculatePlayerScore({ kdRatio: kd_ratioByPlayer, totalKills: total_killsByPlayers });
+                        }
+                        player_score = sortObjectByKey(player_score);
+                        
+                        this.reportArray[`game_${i+1}`].player_score = player_score;
                     }
 
                     resolve(this.reportArray);
