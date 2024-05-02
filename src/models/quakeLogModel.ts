@@ -1,8 +1,26 @@
 import fs from 'fs'
+import path from 'path'
 import readline from 'readline'
 import axios, { AxiosResponse } from 'axios'
 import { IGameMatch, IGameReport, IPlayerRanking, IRanking } from '../@types'
 import { isEmptyObject, sortObjectByKey, sortObjectByValue } from '../utils/object'
+
+
+export const writeStreamLogFile = (filePath: string): fs.WriteStream => {
+    const fullPath = path.join(__dirname, filePath);
+    return fs.createWriteStream(fullPath, { encoding: 'utf8' });
+}
+
+export const readerStreamLogFile = (file: string): readline.Interface => {
+    return readline.createInterface({
+        input: fs.createReadStream(file, { encoding: 'utf8' }),
+        //output: process.stdout    
+    });
+}
+
+
+
+
 
 
 
