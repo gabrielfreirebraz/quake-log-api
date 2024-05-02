@@ -1,5 +1,4 @@
 
-type TypePercentage = `${number}%` | `${string}%`;
 
 interface IRanking<T> {
     [player: string]: T
@@ -11,10 +10,11 @@ interface IGameMatch {
     total_kills: number,
     players: Array<string>,
     kills: Record<string, number>,
-    deaths: Record<string, number>
+    deaths: Record<string, number>,
+    efficiency: Record<string, number>
 }
 interface IGameReport<T = IGameMatch> { 
     [key: string]: T
 }
 
-export { IGameReport, IPlayerRanking, IRanking, TypePercentage }
+export { IGameReport, IPlayerRanking, IRanking, IGameMatch }

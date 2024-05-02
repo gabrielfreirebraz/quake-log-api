@@ -1,8 +1,14 @@
 import fs from 'fs'
 import readline from 'readline'
 import axios from 'axios'
-import { IGameReport, IPlayerRanking, IRanking, TypePercentage } from '../@types'
+import { IGameMatch, IGameReport, IPlayerRanking, IRanking } from '../@types'
 import { isEmptyObject, sortObjectByKey, sortObjectByValue } from '../utils/object'
+
+interface PlayerStats {
+    totalKills: number;
+    totalDeaths: number;
+    kdRatio?: number;
+}
 
 
 
@@ -10,59 +16,32 @@ export class QuakeLogModel {
 
     protected reportArray: IGameReport = {}
 
-
-    calculateStandardEfficiency(games: IGameReport): IRanking<TypePercentage> {
-        const playerStats: { [player: string]: { kills: number, deaths: number } } = {};
-      
-        // Aggregate kills and deaths for each player across all games
-        for (const gameKey in games) {
-          const game = games[gameKey];
-          game.players.forEach(player => {
-            if (!playerStats[player]) {
-              playerStats[player] = { kills: 0, deaths: 0 };
-            }
-      
-            const kills = game.kills[player] ?? 0;
-            const deaths = game.deaths[player] ?? 0;
-      
-            // Adjust negative kills to zero
-            playerStats[player].kills += Math.max(0, kills);
-            playerStats[player].deaths += deaths;
-          });
-        }
-      
-        // Calculate efficiency as kills/deaths ratio for each player, convert to percentage and format as string
-        const efficiencies: IRanking<TypePercentage> = {};
-        const tempSortableEfficiencies: { player: string, efficiency: number }[] = [];
-
-        for (const player in playerStats) {
-          const stats = playerStats[player];
-          let efficiency;
-
-          if (stats.deaths === 0) {
-            efficiencies[player] = 'Infinity%'; // Infinite efficiency if no deaths
-            efficiency = Infinity;
-
-          } else {
-            efficiency = (stats.kills / stats.deaths) * 100; // Convert to percentage
-            const formattedEfficiency: TypePercentage = Number.isInteger(efficiency) ? 
-              `${efficiency}%` : `${efficiency.toFixed(2)}%`; // Remove decimal places if integer
-            efficiencies[player] = formattedEfficiency;
-          }
-          tempSortableEfficiencies.push({ player, efficiency });
-
-        }
-
-        // Sort players by efficiency in descending order
-        tempSortableEfficiencies.sort((a, b) => b.efficiency - a.efficiency);
-
-        // Create a sorted object based on efficiency
-        const sortedEfficiencies: IRanking<TypePercentage> = {};
-        tempSortableEfficiencies.forEach(item => {
-            sortedEfficiencies[item.player] = efficiencies[item.player];
+    calculateStandardEfficiency(games: IGameReport): IRanking<number> {
+        const playerStats: { [key: string]: { totalKills: number; totalDeaths: number } } = {};
+        const playerEfficiency: IRanking<number> = {};
+    
+        // Agregando kills e deaths de todas as partidas
+        Object.values(games).forEach(game => {
+            game.players.forEach(player => {
+                if (!playerStats[player]) {
+                    playerStats[player] = { totalKills: 0, totalDeaths: 0 };
+                }
+                playerStats[player].totalKills += Math.max(game.kills[player] || 0, 0); // Considera kills negativas como zero
+                playerStats[player].totalDeaths += game.deaths[player] || 0;
+            });
         });
-      
-        return sortedEfficiencies;
+    
+        // Calculando a eficiência para cada jogador
+        Object.keys(playerStats).forEach(player => {
+            const { totalKills, totalDeaths } = playerStats[player];
+            if (totalDeaths > 0) {
+                playerEfficiency[player] = parseFloat((totalKills / totalDeaths).toFixed(2)); // Resultado como número
+            } else {
+                playerEfficiency[player] = totalKills > 0 ? parseFloat(totalKills.toFixed(2)) : 0; // Se não houver mortes, retorna kills como número ou 0
+            }
+        });
+    
+        return playerEfficiency;
     }
 
     rankPlayersByDeaths(games: IGameReport): IRanking<number> {
@@ -119,6 +98,22 @@ export class QuakeLogModel {
 
             resolve(ranking);
         });
+    }
+
+    calculateEfficiency(game: IGameMatch): Record<string, number> {
+        game.efficiency = {}; // Inicializa a nova propriedade no objeto do jogo
+        game.players.forEach(player => {
+            const kills = Math.max(game.kills[player], 0); // Ajusta kills negativas para zero
+            const deaths = game.deaths[player];
+    
+            if (deaths > 0) {
+                game.efficiency[player] = parseFloat((kills / deaths).toFixed(2)); // Resultado com duas casas decimais
+            } else {
+                // Se não houver mortes, ainda usamos kills como referência para desempenho
+                game.efficiency[player] = parseFloat(kills.toFixed(2)); // Direto como número de kills, mesmo que zero
+            }
+        });
+        return game.efficiency;
     }
 
     async logReport(): Promise<IGameReport> {
@@ -190,6 +185,7 @@ export class QuakeLogModel {
                         let kills: Record<string, number> = {};
                         let deaths: Record<string, number> = {};
                         let total_kills: number = 0;
+                        let efficiency: Record<string, number> = {};
 
                         
                         for (let i = 0; i < sessionLogsArray.length; i++) {
@@ -261,11 +257,19 @@ export class QuakeLogModel {
                             }
                         });
 
+
+
                         kills  = sortObjectByKey(kills);
                         deaths = sortObjectByKey(deaths);
 
                         // mount report array group
-                        this.reportArray[`game_${i+1}`] = { total_kills, players, kills, deaths };
+                        this.reportArray[`game_${i+1}`] = { total_kills, players, kills, deaths, efficiency };
+
+                        // 
+                        efficiency = this.calculateEfficiency(this.reportArray[`game_${i+1}`]);
+
+                        this.reportArray[`game_${i+1}`].efficiency = efficiency;
+
                     }
 
                     resolve(this.reportArray);
