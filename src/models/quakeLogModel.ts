@@ -4,13 +4,6 @@ import axios from 'axios'
 import { IGameMatch, IGameReport, IPlayerRanking, IRanking } from '../@types'
 import { isEmptyObject, sortObjectByKey, sortObjectByValue } from '../utils/object'
 
-interface PlayerStats {
-    totalKills: number;
-    totalDeaths: number;
-    kdRatio?: number;
-}
-
-
 
 export class QuakeLogModel {
 
@@ -75,7 +68,7 @@ export class QuakeLogModel {
         
         return new Promise<IPlayerRanking>((resolve, reject) => {
 
-            const ranking: IPlayerRanking = { playerRanking: { "kills": {}, "deaths": {}, "efficiency": {} } };
+            const ranking: IPlayerRanking = { playerRanking: { "kills": {}, "deaths": {}, "scoreKD": {} } };
             let playerRankingKills = ranking['playerRanking']['kills'];
 
             for (const i in logReport) {
@@ -94,26 +87,26 @@ export class QuakeLogModel {
 
             ranking['playerRanking']['kills'] = sortObjectByValue(playerRankingKills);              
             ranking['playerRanking']['deaths'] = this.rankPlayersByDeaths(logReport);
-            ranking['playerRanking']['efficiency'] = this.calculateStandardEfficiency(logReport);
+            ranking['playerRanking']['scoreKD'] = this.calculateStandardEfficiency(logReport);
 
             resolve(ranking);
         });
     }
 
     calculateEfficiency(game: IGameMatch): Record<string, number> {
-        game.efficiency = {}; // Inicializa a nova propriedade no objeto do jogo
+        game.scoreKD = {}; // Inicializa a nova propriedade no objeto do jogo
         game.players.forEach(player => {
             const kills = Math.max(game.kills[player], 0); // Ajusta kills negativas para zero
             const deaths = game.deaths[player];
     
             if (deaths > 0) {
-                game.efficiency[player] = parseFloat((kills / deaths).toFixed(2)); // Resultado com duas casas decimais
+                game.scoreKD[player] = parseFloat((kills / deaths).toFixed(2)); // Resultado com duas casas decimais
             } else {
                 // Se não houver mortes, ainda usamos kills como referência para desempenho
-                game.efficiency[player] = parseFloat(kills.toFixed(2)); // Direto como número de kills, mesmo que zero
+                game.scoreKD[player] = parseFloat(kills.toFixed(2)); // Direto como número de kills, mesmo que zero
             }
         });
-        return game.efficiency;
+        return game.scoreKD;
     }
 
     async logReport(): Promise<IGameReport> {
@@ -185,7 +178,7 @@ export class QuakeLogModel {
                         let kills: Record<string, number> = {};
                         let deaths: Record<string, number> = {};
                         let total_kills: number = 0;
-                        let efficiency: Record<string, number> = {};
+                        let scoreKD: Record<string, number> = {};
 
                         
                         for (let i = 0; i < sessionLogsArray.length; i++) {
@@ -263,12 +256,12 @@ export class QuakeLogModel {
                         deaths = sortObjectByKey(deaths);
 
                         // mount report array group
-                        this.reportArray[`game_${i+1}`] = { total_kills, players, kills, deaths, efficiency };
+                        this.reportArray[`game_${i+1}`] = { total_kills, players, kills, deaths, scoreKD };
 
                         // 
-                        efficiency = this.calculateEfficiency(this.reportArray[`game_${i+1}`]);
+                        scoreKD = this.calculateEfficiency(this.reportArray[`game_${i+1}`]);
 
-                        this.reportArray[`game_${i+1}`].efficiency = efficiency;
+                        this.reportArray[`game_${i+1}`].scoreKD = scoreKD;
 
                     }
 

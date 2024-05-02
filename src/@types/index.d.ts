@@ -1,4 +1,5 @@
 
+// type TypePercentage = `${number}%` | `${string}%`;
 
 interface IRanking<T> {
     [player: string]: T
@@ -11,7 +12,7 @@ interface IGameMatch {
     players: Array<string>,
     kills: Record<string, number>,
     deaths: Record<string, number>,
-    efficiency: Record<string, number>
+    scoreKD: Record<string, number>
 }
 interface IGameReport<T = IGameMatch> { 
     [key: string]: T
