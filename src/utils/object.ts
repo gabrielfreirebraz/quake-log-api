@@ -14,8 +14,9 @@ export function sortObjectByKey<T>(obj: {[key: string]: T}): {[key: string]: T} 
     return sortedObject;
 }
 
-export function sortObjectByValue(obj: { [key: string]: number }): { [key: string]: number } {
-    const sortedKeys = Object.keys(obj).sort((a, b) => obj[b] - obj[a]);
+export function sortObjectByValue(obj: { [key: string]: number }, ascending: boolean = false): { [key: string]: number } {
+    // Se 'ascending' for true, ordena de forma ascendente, senão, descendente
+    const sortedKeys = Object.keys(obj).sort((a, b) => ascending ? obj[a] - obj[b] : obj[b] - obj[a]);
     const sortedObject: { [key: string]: number } = {};
 
     sortedKeys.forEach(key => {
