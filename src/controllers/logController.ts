@@ -1,16 +1,13 @@
 import { Request, Response } from 'express'
-import { QuakeLogModel } from '../models/quakeLogModel'
-import { processDataFromFile } from '../services/quakeLogService';
+import { QuakeLogModel } from '../models/logReportModel'
+import { processDataFromFile } from '../services/logReportService';
 
 export class QuakeLogController {
 
     async logReport(request: Request, response: Response) {
-        
-        //const Model = new QuakeLogModel();
-        // const Report = await Model.logReport();
-       const Report = await processDataFromFile();
+       const ReportService = await processDataFromFile();
 
-        response.status(200).send( Report )
+        response.status(200).send( ReportService )
     }
 
     async playerRanking(request: Request, response: Response) {

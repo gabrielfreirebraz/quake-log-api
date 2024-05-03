@@ -11,9 +11,10 @@ export const writeStreamLogFile = (filePath: string): fs.WriteStream => {
     return fs.createWriteStream(fullPath, { encoding: 'utf8' });
 }
 
-export const readerStreamLogFile = (file: string): readline.Interface => {
+export const readerStreamLogFile = (filePath: string): readline.Interface => {
+    const fullPath = path.join(__dirname, filePath);
     return readline.createInterface({
-        input: fs.createReadStream(file, { encoding: 'utf8' }),
+        input: fs.createReadStream(fullPath, { encoding: 'utf8' }),
         //output: process.stdout    
     });
 }

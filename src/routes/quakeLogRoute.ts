@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { QuakeLogController } from '../controllers/quakeLogController';
+import { QuakeLogController } from '../controllers/logController';
 
 const QuakeLogRoute = Router();
 const Controller = new QuakeLogController();
