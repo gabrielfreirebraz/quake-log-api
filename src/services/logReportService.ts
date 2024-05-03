@@ -3,11 +3,18 @@ import fs from 'fs'
 import readline from 'readline'
 import { Stream } from 'stream';
 import { IGameMatch, IGameReport } from "../@types";
-import { writeStreamLogFile, readerStreamLogFile } from "../models/logReportModel";
+import { writeStreamLogFile, readerStreamLogFile } from "../models/quakeLogModel";
 import { sortObjectByKey } from "../utils/object";
 
 
-//-------------------------------- To download and read file and create report route
+const processDataFromFile = async () => {
+    const writerStream: fs.WriteStream = await downloadFile();
+
+    const reportArr = await handleStream_DownloadLog_and_CreateReport(writerStream);
+
+    return reportArr;
+}
+
 const loadExternalFile = async (endpointFile: string): Promise<AxiosResponse<Stream>> => {
     return await axios.get<Stream>(endpointFile, { responseType: 'stream' })
 }
@@ -194,15 +201,6 @@ const handleStream_CreateReport = (readerStream: readline.Interface, successCall
     });  
 }
 
-const processDataFromFile = async () => {
-    const writerStream: fs.WriteStream = await downloadFile();
-
-    const reportArr = await handleStream_DownloadLog_and_CreateReport(writerStream);
-
-    return reportArr;
-}
-
-//-------------------------------- Calculate players information about game
 const calculatePlayerScore = (playerStats: { kdRatio: number; totalKills: number; }, weightFactor: number = 10): number => {
     return parseFloat(((playerStats.kdRatio * weightFactor) + playerStats.totalKills).toFixed(2));
 }
