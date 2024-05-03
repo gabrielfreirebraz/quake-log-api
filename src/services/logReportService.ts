@@ -172,22 +172,10 @@ const handleStream_CreateReport = (readerStream: readline.Interface, successCall
             // mount report array group
             reportArr[`game_${i+1}`] = { total_kills, players, kills, deaths, kd_ratio, player_score };
 
-            // 
             kd_ratio = calculateEfficiencyKDRatio(reportArr[`game_${i+1}`]);
+            player_score = calculatePlayerScore(kd_ratio, kills);
 
             reportArr[`game_${i+1}`].kd_ratio = kd_ratio;
-
-
-
-            // calc score
-            for (const player in kd_ratio) {
-                const kd_ratioByPlayer = kd_ratio[player];
-                const total_killsByPlayers = kills[player] >= 0 ? kills[player] : 0;
-
-                player_score[player] = calculatePlayerScore({ kdRatio: kd_ratioByPlayer, totalKills: total_killsByPlayers });
-            }
-            player_score = sortObjectByValue(player_score);
-            
             reportArr[`game_${i+1}`].player_score = player_score;
         }
 
@@ -201,7 +189,21 @@ const handleStream_CreateReport = (readerStream: readline.Interface, successCall
     });  
 }
 
-const calculatePlayerScore = (playerStats: { kdRatio: number; totalKills: number; }, weightFactor: number = 10): number => {
+const calculatePlayerScore = (objectKDRatio: Record<string, number>, objectKillsPlayer: Record<string, number>): Record<string, number> => {
+    let player_score: Record<string, number> = {};
+
+    for (const player in objectKDRatio) {
+        const valueKDRatioPlayer = objectKDRatio[player];
+        const totalKillsPlayer = objectKillsPlayer[player] >= 0 ? objectKillsPlayer[player] : 0;
+
+        player_score[player] = calculatePlayerScoreFormula({ kdRatio: valueKDRatioPlayer, totalKills: totalKillsPlayer });
+    }
+    const sortedPlayerScore = sortObjectByValue(player_score);    
+
+    return sortedPlayerScore;
+}
+
+const calculatePlayerScoreFormula = (playerStats: { kdRatio: number; totalKills: number; }, weightFactor: number = 10): number => {
     return parseFloat(((playerStats.kdRatio * weightFactor) + playerStats.totalKills).toFixed(2));
 }
 
