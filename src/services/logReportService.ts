@@ -7,7 +7,7 @@ import { writeStreamLogFile, readerStreamLogFile } from "../models/quakeLogModel
 import { sortObjectByKey } from "../utils/object";
 
 
-const processDataFromFile = async () => {
+const processDataReport = async () => {
     const writerStream: fs.WriteStream = await downloadFile();
 
     const reportArr = await handleStream_DownloadLog_and_CreateReport(writerStream);
@@ -222,6 +222,6 @@ const calculateEfficiency = (game: IGameMatch): Record<string, number> => {
     return sortedValues;
 }
 
-export { processDataFromFile }
+export { processDataReport }
 
 
