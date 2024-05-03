@@ -4,7 +4,7 @@ import readline from 'readline'
 import { Stream } from 'stream';
 import { IGameMatch, IGameReport } from "../@types";
 import { writeStreamLogFile, readerStreamLogFile } from "../models/quakeLogModel";
-import { sortObjectByKey } from "../utils/object";
+import { sortObjectByKey, sortObjectByValue } from "../utils/object";
 
 
 const processDataReport = async () => {
@@ -166,28 +166,16 @@ const handleStream_CreateReport = (readerStream: readline.Interface, successCall
                 }
             });
 
-            kills  = sortObjectByKey(kills);
-            deaths = sortObjectByKey(deaths);
+            kills  = sortObjectByValue(kills);
+            deaths = sortObjectByValue(deaths, true);
 
             // mount report array group
             reportArr[`game_${i+1}`] = { total_kills, players, kills, deaths, kd_ratio, player_score };
 
-            // 
-            kd_ratio = calculateEfficiency(reportArr[`game_${i+1}`]);
+            kd_ratio = calculateEfficiencyKDRatio(reportArr[`game_${i+1}`]);
+            player_score = calculatePlayerScore(kd_ratio, kills);
 
             reportArr[`game_${i+1}`].kd_ratio = kd_ratio;
-
-
-
-            // calc score
-            for (const player in kd_ratio) {
-                const kd_ratioByPlayer = kd_ratio[player];
-                const total_killsByPlayers = kills[player] >= 0 ? kills[player] : 0;
-
-                player_score[player] = calculatePlayerScore({ kdRatio: kd_ratioByPlayer, totalKills: total_killsByPlayers });
-            }
-            player_score = sortObjectByKey(player_score);
-            
             reportArr[`game_${i+1}`].player_score = player_score;
         }
 
@@ -201,11 +189,25 @@ const handleStream_CreateReport = (readerStream: readline.Interface, successCall
     });  
 }
 
-const calculatePlayerScore = (playerStats: { kdRatio: number; totalKills: number; }, weightFactor: number = 10): number => {
+const calculatePlayerScore = (objectKDRatio: Record<string, number>, objectKillsPlayer: Record<string, number>): Record<string, number> => {
+    let player_score: Record<string, number> = {};
+
+    for (const player in objectKDRatio) {
+        const valueKDRatioPlayer = objectKDRatio[player];
+        const totalKillsPlayer = objectKillsPlayer[player] >= 0 ? objectKillsPlayer[player] : 0;
+
+        player_score[player] = calculatePlayerScoreFormula({ kdRatio: valueKDRatioPlayer, totalKills: totalKillsPlayer });
+    }
+    const sortedPlayerScore = sortObjectByValue(player_score);    
+
+    return sortedPlayerScore;
+}
+
+const calculatePlayerScoreFormula = (playerStats: { kdRatio: number; totalKills: number; }, weightFactor: number = 10): number => {
     return parseFloat(((playerStats.kdRatio * weightFactor) + playerStats.totalKills).toFixed(2));
 }
 
-const calculateEfficiency = (game: IGameMatch): Record<string, number> => {
+const calculateEfficiencyKDRatio = (game: IGameMatch): Record<string, number> => {
     game.kd_ratio = {}; // Inicializa a nova propriedade no objeto do jogo
     game.players.forEach(player => {
         const kills = Math.max(game.kills[player], 0); // Ajusta kills negativas para zero
@@ -218,7 +220,7 @@ const calculateEfficiency = (game: IGameMatch): Record<string, number> => {
             game.kd_ratio[player] = parseFloat(kills.toFixed(2)); // Direto como número de kills, mesmo que zero
         }
     });
-    const sortedValues = sortObjectByKey(game.kd_ratio);
+    const sortedValues = sortObjectByValue(game.kd_ratio);
     return sortedValues;
 }
 

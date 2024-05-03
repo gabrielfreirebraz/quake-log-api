@@ -57,21 +57,15 @@ const rankPlayersByDeaths = (games: IGameReport): IRanking<number> => {
     // Aggregate deaths for each player across all games
     Object.values(games).forEach(game => {
         game.players.forEach(player => {
-        if (!deathStats[player]) {
-            deathStats[player] = 0; // Initialize if not already present
-        }
-        const deaths = game.deaths[player] ?? 0;
-        deathStats[player] += deaths; // Sum up deaths
+            if (!deathStats[player]) {
+                deathStats[player] = 0; // Initialize if not already present
+            }
+            const deaths = game.deaths[player] ?? 0;
+            deathStats[player] += deaths; // Sum up deaths
         });
     });
     
-    // Sort the entries by deaths in ascending order and rebuild the object
-    const sortedPlayers = Object.entries(deathStats)
-        .sort((a, b) => a[1] - b[1])
-        .reduce<{ [player: string]: number }>((obj, [player, deaths]) => {
-        obj[player] = deaths;
-        return obj;
-        }, {});
+    const sortedPlayers = sortObjectByValue(deathStats, true)        
     
     return sortedPlayers;
 }
