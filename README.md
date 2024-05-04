@@ -1,13 +1,13 @@
-## API Quake Log
+# API Quake Log
 
 Project to parse the Quake log file.
 
-### Tecnologies
+## Tecnologies
 
 - NodeJS 18.16.1 + Express 4.19.2 + Typescript 5.4.5
 - Docker 24.0.9
 
-### Get started
+## Get started
 
 ```bash 
 yarn  
@@ -17,25 +17,25 @@ npm install
 docker-compose up -d
 ```
 
-### Endpoints
+## Endpoints
 
-# Game Report Request Route:
+#### Game Report Request Route:
 
 ```
 GET: http://{url}:3000/api/report     
 ```
 
-# Player Ranking Request Route:
+#### Player Ranking Request Route:
 
 ```
 GET: http://{url}:3000/api/ranking     
 ```
    
-# API Responses   
+#### API Responses   
 
 ![API Response](src/media/VideoQuakeLogAPI.gif)
     
-# Player Ranking Response Route:  
+#### Player Ranking Response Route:  
   
 ```json
 {
@@ -100,29 +100,11 @@ GET: http://{url}:3000/api/ranking
 }
 ```
 
-Game Report Response Route:
+#### Game Report Response Route:
   
 ```json
 {
-  "game_1": {
-    "total_kills": 0,
-    "players": [
-      "Isgalamido"
-    ],
-    "kills": {
-      "Isgalamido": 0
-    },
-    "deaths": {
-      "Isgalamido": 0
-    },
-    "kd_ratio": {
-      "Isgalamido": 0
-    },
-    "player_score": {
-      "Isgalamido": 0
-    }
-  },
-  "game_2": {
+  "game_X": {
     "total_kills": 15,
     "players": [
       "Isgalamido",
@@ -155,6 +137,6 @@ Game Report Response Route:
       "Zeh": 0
     }
   },
-  "game_3": {...}
+  "game_Y": {...}
 }
 ```
