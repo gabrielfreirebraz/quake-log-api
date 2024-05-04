@@ -174,10 +174,11 @@ In addition to the metrics from each individual match, the API also compiles an 
 Using the general metrics, it is possible to develop interfaces that display the individual ranking of each metric or even the player score, which is commonly used in tournaments.
 
 | Ranking | Player | Kills
+| ----------- | ----------- | ----------- | 
 | 1 | Isgalamido | 147
 | 2 | Zeh | 124
 | 3 | Oootsimo | 114
-
+  
 | Ranking | Player | Kills | Deaths | KD Ratio | Score
 | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
 | 1 | Isgalamido | 147 | 153 | 0.99 | 156.9
@@ -189,12 +190,16 @@ Using the general metrics, it is possible to develop interfaces that display the
 
 #### K/D Ratio (Kill/Death Ratio)
   
-The KD Ratio, or Kill/Death Ratio, is a common metric in competitive gaming, especially in shooters and real-time strategy games. It represents the ratio between the number of eliminations (kills) a player achieves and the number of times they are eliminated (deaths) in a match. A KD Ratio greater than 1 indicates that a player has eliminated more opponents than they have been eliminated, suggesting effective offensive performance. Conversely, a KD Ratio less than 1 may indicate that the player has been eliminated more often than they have managed to eliminate others, which could be a sign of struggle in the game.
+The KD Ratio, or Kill/Death Ratio, is a common metric in competitive gaming, especially in shooters and real-time strategy games. It represents the ratio between the number of eliminations (kills) a player achieves and the number of times they are eliminated (deaths) in a match. 
+  
+A KD Ratio greater than 1 indicates that a player has eliminated more opponents than they have been eliminated, suggesting effective offensive performance. Conversely, a KD Ratio less than 1 may indicate that the player has been eliminated more often than they have managed to eliminate others, which could be a sign of struggle in the game.
   
 
-#### Player Score
+#### Player Score (K/D Ratio+Kills)
   
-The efficiency score, based on the KD Ratio and kills, is another important metric that helps evaluate a player's overall performance beyond just the number of eliminations and deaths. This score combines the KD Ratio with the total number of eliminations to produce a score that reflects both the effectiveness and aggressiveness of the player. For example, a player with many eliminations but also many deaths might have a moderate KD Ratio, but a high efficiency score due to the high number of eliminations, highlighting their significant impact and contribution to the matches. In our API, we use a weight of 10 in calculating this score to emphasize the value of eliminations, reflecting the importance of offensive actions within the game context. This weighting helps identify players who not only avoid being eliminated but also actively contribute to the team's success through offensive actions.
+The efficiency score, based on the KD Ratio and kills, is another important metric that helps evaluate a player's overall performance beyond just the number of eliminations and deaths. This score combines the KD Ratio with the total number of eliminations to produce a score that reflects both the effectiveness and aggressiveness of the player. For example, a player with many eliminations but also many deaths might have a moderate KD Ratio, but a high efficiency score due to the high number of eliminations, highlighting their significant impact and contribution to the matches. 
+  
+In our API, we use a weight of 10 in calculating this score to emphasize the value of eliminations, reflecting the importance of offensive actions within the game context. This weighting helps identify players who not only avoid being eliminated but also actively contribute to the team's success through offensive actions.
 
 
 
