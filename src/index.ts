@@ -15,6 +15,8 @@ app.use(express.json());
 app.use(cors());
 app.use("/api", quakeLogRouter);
 
+app.set('trust proxy', 1); // fix docker + rate limit
+
 
 app.listen(process.env.PORT || 3000, () => {
 
