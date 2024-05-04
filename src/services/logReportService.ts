@@ -1,17 +1,17 @@
 import axios, { AxiosResponse } from "axios";
 import fs from 'fs'
 import readline from 'readline'
+// import createError from 'http-errors';
 import 'dotenv/config'
+
 import { Stream } from 'stream';
 import { IGameMatch, IGameReport } from "../@types";
 import { writeStreamLogFile, readerStreamLogFile } from "../models/quakeLogModel";
 import { sortObjectByValue } from "../utils/object";
 
 
-
 const processDataReport = async () => {
     const writerStream: fs.WriteStream = await downloadFile();
-
     const reportArr = await handleStream_DownloadLog_and_CreateReport(writerStream);
 
     return reportArr;
@@ -43,12 +43,12 @@ const handleStream_DownloadLog_and_CreateReport = async (stream: fs.WriteStream)
                 (result: any) => resolve(result),
                 (error: any) => reject(error)
             );
-            // const reportArr = handleStreamToCreateReport();
-            // resolve(reportArr);
         });
         stream.on('error', (err) => {
             console.error('Error to write in file:', err);
             reject(err);
+
+            //throw createError(500, 'Error to write in file')
         });
     });
 }
@@ -188,6 +188,8 @@ const handleStream_CreateReport = (readerStream: readline.Interface, successCall
     readerStream.on('error', (err) => {
         console.error('Read file error:', err);
         errorCallback(err);
+
+        //throw createError(500, 'Read file error')        
     });  
 }
 
