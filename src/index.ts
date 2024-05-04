@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import helmet from "helmet";
+import 'dotenv/config'
 import { quakeLogRouter } from './routes/quakeLogRouter';
 import { limiter } from './utils/limiter';
 
@@ -13,7 +14,7 @@ app.use(cors());
 app.use("/api", quakeLogRouter);
 
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
 
     console.log('api quake log running');
 });

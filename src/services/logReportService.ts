@@ -1,13 +1,11 @@
 import axios, { AxiosResponse } from "axios";
 import fs from 'fs'
 import readline from 'readline'
-import dotenv from 'dotenv';
+import 'dotenv/config'
 import { Stream } from 'stream';
 import { IGameMatch, IGameReport } from "../@types";
 import { writeStreamLogFile, readerStreamLogFile } from "../models/quakeLogModel";
 import { sortObjectByValue } from "../utils/object";
-
-dotenv.config();
 
 
 
@@ -24,8 +22,8 @@ const loadExternalFile = async (endpointFile: string): Promise<AxiosResponse<Str
 }
 
 const downloadFile = async (): Promise<fs.WriteStream> => {
-    const responseLogs: AxiosResponse<Stream> = await loadExternalFile(process.env.DOWNLOAD_URL_LOG+'');
-    const modelWriterStream: fs.WriteStream = writeStreamLogFile(process.env.LOCAL_FILE_LOG+'');
+    const responseLogs: AxiosResponse<Stream> = await loadExternalFile(process.env.DOWNLOAD_URL_LOG!);
+    const modelWriterStream: fs.WriteStream = writeStreamLogFile(process.env.LOCAL_FILE_LOG!);
 
     responseLogs.data.pipe(modelWriterStream);
 
@@ -38,7 +36,7 @@ const handleStream_DownloadLog_and_CreateReport = async (stream: fs.WriteStream)
         stream.on('finish', () => {
             console.log('Downloaded file.');
 
-            const modelReaderStream: readline.Interface = readerStreamLogFile(process.env.LOCAL_FILE_LOG+'');
+            const modelReaderStream: readline.Interface = readerStreamLogFile(process.env.LOCAL_FILE_LOG!);
 
             handleStream_CreateReport(
                 modelReaderStream,
