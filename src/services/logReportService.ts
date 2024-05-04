@@ -1,15 +1,17 @@
 import axios, { AxiosResponse } from "axios";
 import fs from 'fs'
 import readline from 'readline'
+// import createError from 'http-errors';
+import 'dotenv/config'
+
 import { Stream } from 'stream';
 import { IGameMatch, IGameReport } from "../@types";
 import { writeStreamLogFile, readerStreamLogFile } from "../models/quakeLogModel";
-import { sortObjectByKey, sortObjectByValue } from "../utils/object";
+import { sortObjectByValue } from "../utils/object";
 
 
 const processDataReport = async () => {
     const writerStream: fs.WriteStream = await downloadFile();
-
     const reportArr = await handleStream_DownloadLog_and_CreateReport(writerStream);
 
     return reportArr;
@@ -20,8 +22,8 @@ const loadExternalFile = async (endpointFile: string): Promise<AxiosResponse<Str
 }
 
 const downloadFile = async (): Promise<fs.WriteStream> => {
-    const responseLogs: AxiosResponse<Stream> = await loadExternalFile('https://gist.githubusercontent.com/cloudwalk-tests/be1b636e58abff14088c8b5309f575d8/raw/df6ef4a9c0b326ce3760233ef24ae8bfa8e33940/qgames.log');
-    const modelWriterStream: fs.WriteStream = writeStreamLogFile('../logs/qgames.log');
+    const responseLogs: AxiosResponse<Stream> = await loadExternalFile(process.env.DOWNLOAD_URL_LOG!);
+    const modelWriterStream: fs.WriteStream = writeStreamLogFile(process.env.LOCAL_FILE_LOG!);
 
     responseLogs.data.pipe(modelWriterStream);
 
@@ -34,19 +36,19 @@ const handleStream_DownloadLog_and_CreateReport = async (stream: fs.WriteStream)
         stream.on('finish', () => {
             console.log('Downloaded file.');
 
-            const modelReaderStream: readline.Interface = readerStreamLogFile('../logs/qgames.log');
+            const modelReaderStream: readline.Interface = readerStreamLogFile(process.env.LOCAL_FILE_LOG!);
 
             handleStream_CreateReport(
                 modelReaderStream,
                 (result: any) => resolve(result),
                 (error: any) => reject(error)
             );
-            // const reportArr = handleStreamToCreateReport();
-            // resolve(reportArr);
         });
         stream.on('error', (err) => {
             console.error('Error to write in file:', err);
             reject(err);
+
+            //throw createError(500, 'Error to write in file')
         });
     });
 }
@@ -186,6 +188,8 @@ const handleStream_CreateReport = (readerStream: readline.Interface, successCall
     readerStream.on('error', (err) => {
         console.error('Read file error:', err);
         errorCallback(err);
+
+        //throw createError(500, 'Read file error')        
     });  
 }
 
