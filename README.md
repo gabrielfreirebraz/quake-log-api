@@ -176,6 +176,19 @@ Using the general metrics, it is possible to develop interfaces that display the
 <table>
 <tr>
 <td>
+
+#### Player Ranking
+
+</td>
+<td>
+
+#### Player Ranking K/D Ratio
+
+</td>
+
+</tr>
+<tr>
+<td>
   
 | Ranking | Player | Kills | Deaths | KD Ratio | Score
 | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
