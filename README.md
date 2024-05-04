@@ -173,18 +173,24 @@ In addition to the metrics from each individual match, the API also compiles an 
   
 Using the general metrics, it is possible to develop interfaces that display the individual ranking of each metric or even the player score, which is commonly used in tournaments.
 
-| Ranking | Player | Kills
-| ----------- | ----------- | ----------- | 
-| 1 | Isgalamido | 147
-| 2 | Zeh | 124
-| 3 | Oootsimo | 114
-  
+<table>
+<tr>
+<td>
 | Ranking | Player | Kills | Deaths | KD Ratio | Score
 | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
 | 1 | Isgalamido | 147 | 153 | 0.99 | 156.9
 | 2 | Zeh | 124 | 173 | 0.75 | 131.5
 | 3 | Oootsimo | 114 | 127 | 0.91 | 123.1
-   
+</td>
+<td>
+| Ranking | Player | K/D Ratio
+| ----------- | ----------- | ----------- | 
+| 1 | Isgalamido | 0.99
+| 2 | Oootsimo | 0.91
+| 3 | Zeh | 0.75
+</td>
+</tr>
+</table>
 
 ## Ranking metrics 
 
