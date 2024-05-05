@@ -35,7 +35,48 @@ GET: http://{url}:3000/api/ranking
 
 ![API Response](src/media/VideoQuakeLogAPI.gif)
     
-#### Player Ranking Response Route:  
+#### Response Route to `/api/report`:
+  
+```json
+{
+  "game_X": {
+    "total_kills": 15,
+    "players": [
+      "Isgalamido",
+      "Dono da Bola",
+      "Mocinha",
+      "Zeh"
+    ],
+    "kills": {
+      "Mocinha": 0,
+      "Dono da Bola": -1,
+      "Zeh": -2,
+      "Isgalamido": -4
+    },
+    "deaths": {
+      "Dono da Bola": 1,
+      "Mocinha": 2,
+      "Zeh": 2,
+      "Isgalamido": 10
+    },
+    "kd_ratio": {
+      "Isgalamido": 0,
+      "Dono da Bola": 0,
+      "Mocinha": 0,
+      "Zeh": 0
+    },
+    "player_score": {
+      "Isgalamido": 0,
+      "Dono da Bola": 0,
+      "Mocinha": 0,
+      "Zeh": 0
+    }
+  },
+  "game_Y": {...}
+}
+```
+   
+#### Response Route to `/api/ranking`:  
   
 ```json
 {
@@ -99,47 +140,7 @@ GET: http://{url}:3000/api/ranking
   }
 }
 ```
-
-#### Game Report Response Route:
   
-```json
-{
-  "game_X": {
-    "total_kills": 15,
-    "players": [
-      "Isgalamido",
-      "Dono da Bola",
-      "Mocinha",
-      "Zeh"
-    ],
-    "kills": {
-      "Mocinha": 0,
-      "Dono da Bola": -1,
-      "Zeh": -2,
-      "Isgalamido": -4
-    },
-    "deaths": {
-      "Dono da Bola": 1,
-      "Mocinha": 2,
-      "Zeh": 2,
-      "Isgalamido": 10
-    },
-    "kd_ratio": {
-      "Isgalamido": 0,
-      "Dono da Bola": 0,
-      "Mocinha": 0,
-      "Zeh": 0
-    },
-    "player_score": {
-      "Isgalamido": 0,
-      "Dono da Bola": 0,
-      "Mocinha": 0,
-      "Zeh": 0
-    }
-  },
-  "game_Y": {...}
-}
-```
 
 # Technical Implementations
 
@@ -147,16 +148,11 @@ GET: http://{url}:3000/api/ranking
 
 - **Service Layer Abstraction:** To reinforce modularity and promote a clear separation of concerns, the API implements a service layer where business logic and data access are abstracted into dedicated services. This enables better code reuse, ease of testing, and decoupling.
 
-- **API Security:**
-  We've integrated Helmet to enhance security by setting various HTTP headers appropriately to protect the application from common web vulnerabilities.
+- **API Security:** We've integrated `Helmet` to enhance security by setting various HTTP headers appropriately to protect the application from common web vulnerabilities. We use the `dotenv` library to securely manage the application's environment variables, allowing the loading of different settings for development, testing, and production environments without exposing sensitive information. We have implemented `express-rate-limit` to mitigate Denial of Service (DoS) attacks, controlling the number of requests a user can make in a given period and protecting the API from overuse.
 
-  We use the dotenv library to securely manage the application's environment variables, allowing the loading of different settings for development, testing, and production environments without exposing sensitive information.
+- **Error Handling:** Using `http-errors`, we standardize the creation and management of HTTP error responses, making error handling and code maintenance more consistent and manageable.
 
-  We have implemented express-rate-limit to mitigate Denial of Service (DoS) attacks, controlling the number of requests a user can make in a given period and protecting the API from overuse.
-
-- **Error Handling:** Using http-errors, we standardize the creation and management of HTTP error responses, making error handling and code maintenance more consistent and manageable.
-
-- **Advanced Log Management:** We have adopted Winston to enhance log recording, configuring capturing both in the console and in files, which facilitates log analysis and application performance monitoring.
+- **Advanced Log Management:** We have adopted `Winston` to enhance log recording, configuring capturing both in the console and in files, which facilitates log analysis and application performance monitoring.
 
 - **Adherence to the Single Responsibility Principle:** The API follows the SOLID single responsibility principle, where each module or class has only one reason to change, ensuring modularity and ease of maintenance. We recognize the need for continuous improvements in this area to further enhance the quality of the design.
 
@@ -256,6 +252,30 @@ Using the available metrics across matches, it is possible to develop interfaces
 The KD Ratio, or Kill/Death Ratio, is a common metric in competitive gaming, especially in shooters and real-time strategy games. It represents the ratio between the number of eliminations (kills) a player achieves and the number of times they are eliminated (deaths) in a match. 
   
 A KD Ratio greater than 1 indicates that a player has eliminated more opponents than they have been eliminated, suggesting effective offensive performance. Conversely, a KD Ratio less than 1 may indicate that the player has been eliminated more often than they have managed to eliminate others, which could be a sign of struggle in the game.
+
+**Formula:**
+  
+`Efficiency K/D Ratio = Total Kills / Total Deaths`
+    
+**K/D Performance Categories**
+
+- **Excellent**: K/D greater than 2.0.  
+The player kills more than double the number of times they die. This is an indicator of high skill and combat efficiency.
+
+- **Very Good**: K/D between 1.5 and 2.0. 
+The player kills significantly more than they die, demonstrating good ability to position themselves and make eliminations.
+
+- **Good**: K/D between 1.0 and 1.49.  
+The player has a positive performance, with more kills than deaths, but not dominantly so.
+
+- **Average**: K/D exactly 1.0.  
+The player has a balanced ratio of kills to deaths, indicating average skill in the game.
+
+- **Below Average**: K/D between 0.5 and 0.99.  
+The player dies more often than they kill, indicating they may be facing difficulties against other players.
+
+- **Poor**: K/D less than 0.5.  
+The player has significant difficulties in the game, dying frequently without managing many eliminations.
   
 
 #### Player Score (K/D Ratio+Kills)
@@ -263,3 +283,13 @@ A KD Ratio greater than 1 indicates that a player has eliminated more opponents 
 The efficiency score, based on the KD Ratio and kills, is another important metric that helps evaluate a player's overall performance beyond just the number of eliminations and deaths. This score combines the KD Ratio with the total number of eliminations to produce a score that reflects both the effectiveness and aggressiveness of the player. For example, a player with many eliminations but also many deaths might have a moderate KD Ratio, but a high efficiency score due to the high number of eliminations, highlighting their significant impact and contribution to the matches. 
   
 In our API, we use a weight of 10 in calculating this score to emphasize the value of eliminations, reflecting the importance of offensive actions within the game context. This weighting helps identify players who not only avoid being eliminated but also actively contribute to the team's success through offensive actions.
+
+**Score Calculation**
+  
+We combine the K/D Ratio and total kills into a formula that balances these factors.
+   
+`Player Score = (K/D Ratio) × Weighting Factor + Total Kills`
+  
+Where:
+
+- **Weighting Factor:** This is a value you choose to give weight to the K/D Ratio in the overall calculation. For example, if you choose a weighting factor of 10, it will multiply the K/D Ratio by 10, balancing the importance between efficiency and aggressiveness.
