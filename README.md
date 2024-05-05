@@ -141,7 +141,26 @@ GET: http://{url}:3000/api/ranking
 }
 ```
 
-  
+# Technical Implementations
+
+- **MVC Architecture:** The application adopts the Model-View-Controller (MVC) standard, which divides the application logic into three interconnected but distinct components. This not only simplifies development and maintenance but also enhances scalability.
+
+- **Service Layer Abstraction:** To reinforce modularity and promote a clear separation of concerns, the API implements a service layer where business logic and data access are abstracted into dedicated services. This enables better code reuse, ease of testing, and decoupling.
+
+- **API Security:**
+  We've integrated Helmet to enhance security by setting various HTTP headers appropriately to protect the application from common web vulnerabilities.
+
+  We use the dotenv library to securely manage the application's environment variables, allowing the loading of different settings for development, testing, and production environments without exposing sensitive information.
+
+  We have implemented express-rate-limit to mitigate Denial of Service (DoS) attacks, controlling the number of requests a user can make in a given period and protecting the API from overuse.
+
+- **Error Handling:** Using http-errors, we standardize the creation and management of HTTP error responses, making error handling and code maintenance more consistent and manageable.
+
+- **Advanced Log Management:** We have adopted Winston to enhance log recording, configuring capturing both in the console and in files, which facilitates log analysis and application performance monitoring.
+
+- **Adherence to the Single Responsibility Principle:** The API follows the SOLID single responsibility principle, where each module or class has only one reason to change, ensuring modularity and ease of maintenance. We recognize the need for continuous improvements in this area to further enhance the quality of the design.
+
+
 
 # Quake Game Log API Business Documentation
 
@@ -232,7 +251,7 @@ In our API, we use a weight of 10 in calculating this score to emphasize the val
 
 - **API Authentication and Authorization:** To ensure that only authorized users access the API, it is essential to add an authentication header to each request. Using libraries such as JWT (JSON Web Tokens) is an effective practice for managing these authentications. Furthermore, integrating authentication with an API Gateway to issue authorization tokens and adopting advanced practices, such as using asymmetric keys, is crucial for maintaining access security.
 
-- **Application Architecture:** In scenarios where data consumption occurs via streaming, such as the Quake game logs, it is advisable to adapt the application to an event-driven architecture to increase flexibility and scalability. This facilitates communication with microservices in clients operating under Single Page Applications (SPA) models, like React or Angular. This approach not only enhances efficiency in real-time data management but also supports easier expansion as new services or features are integrated.
+- **Application Architecture:** In scenarios where data consumption occurs via streaming, such as the Quake game logs, it is advisable to adapt the application to an event-driven architecture to increase flexibility and scalability. This facilitates communication with microservices in clients operating under Single Page Applications (SPA) models, like React or Angular. This approach not only enhances efficiency in real-time data management but also supports easier expansion as new services or features are integrated. Besides further abstraction of the `services` in our application and adopt an object-oriented approach, which would increase flexibility, control, and persistence of information during runtime. Additionally, make a plan to unify the modules used across the entire business context, such as KD Ratio calculations, by organizing them in folders like `utils` and implementing the principle of dependency inversion.
 
 - **Monitoring and Observability:** Initially, monitoring with the PM2 library may suffice to track request consumption. For larger contexts, it is recommended to implement tools like Sentry for error tracking and performance monitoring. Observability tools such as Prometheus, Grafana, or Datadog can be integrated to provide deeper insights into the application's health and performance.
 
