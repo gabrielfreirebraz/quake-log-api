@@ -19,126 +19,126 @@ docker-compose up -d
 
 ## Endpoints
 
-#### Game Report Request Route:
+#### URL Request Route for Game Report (no body request):
 
 ```
 GET: http://{url}:3000/api/report     
 ```
 
-#### Player Ranking Request Route:
+#### URL Request Route for Player Ranking (no body request):
 
 ```
 GET: http://{url}:3000/api/ranking     
 ```
    
-#### API Responses   
+#### API Responses Example   
 
 ![API Response](src/media/VideoQuakeLogAPI.gif)
     
-#### Response Route to `/api/report`:
-  
+#### Body Response Route for Game Report from `/api/report` (status code 200):   
+      
 ```json
-{
-  "game_X": {
-    "total_kills": 15,
-    "players": [
-      "Isgalamido",
-      "Dono da Bola",
-      "Mocinha",
-      "Zeh"
-    ],
-    "kills": {
-      "Mocinha": 0,
-      "Dono da Bola": -1,
-      "Zeh": -2,
-      "Isgalamido": -4
+  {
+    "game_X": {
+      "total_kills": 15,
+      "players": [
+        "Isgalamido",
+        "Dono da Bola",
+        "Mocinha",
+        "Zeh"
+      ],
+      "kills": {
+        "Mocinha": 0,
+        "Dono da Bola": -1,
+        "Zeh": -2,
+        "Isgalamido": -4
+      },
+      "deaths": {
+        "Dono da Bola": 1,
+        "Mocinha": 2,
+        "Zeh": 2,
+        "Isgalamido": 10
+      },
+      "kd_ratio": {
+        "Isgalamido": 0,
+        "Dono da Bola": 0,
+        "Mocinha": 0,
+        "Zeh": 0
+      },
+      "player_score": {
+        "Isgalamido": 0,
+        "Dono da Bola": 0,
+        "Mocinha": 0,
+        "Zeh": 0
+      }
     },
-    "deaths": {
-      "Dono da Bola": 1,
-      "Mocinha": 2,
-      "Zeh": 2,
-      "Isgalamido": 10
-    },
-    "kd_ratio": {
-      "Isgalamido": 0,
-      "Dono da Bola": 0,
-      "Mocinha": 0,
-      "Zeh": 0
-    },
-    "player_score": {
-      "Isgalamido": 0,
-      "Dono da Bola": 0,
-      "Mocinha": 0,
-      "Zeh": 0
-    }
-  },
-  "game_Y": {...}
-}
+    "game_Y": {...}
+  }
 ```
    
-#### Response Route to `/api/ranking`:  
-  
+#### Body Response Route for Player Ranking from `/api/ranking` (status code 200):     
+       
 ```json
-{
-  "playerRanking": {
-    "kills": {
-      "Isgalamido": 147,
-      "Zeh": 124,
-      "Oootsimo": 114,
-      "Assasinu Credi": 111,
-      "Dono da Bola": 63,
-      "Chessus": 33,
-      "Mocinha": 0,
-      "Maluquinho": 0,
-      "Fasano Again": 0,
-      "UnnamedPlayer": 0,
-      "Chessus!": 0,
-      "Mal": -3
-    },
-    "deaths": {
-      "Fasano Again": 0,
-      "Chessus!": 0,
-      "UnnamedPlayer": 1,
-      "Maluquinho": 1,
-      "Mocinha": 2,
-      "Chessus": 55,
-      "Oootsimo": 127,
-      "Isgalamido": 153,
-      "Zeh": 173,
-      "Mal": 178,
-      "Dono da Bola": 189,
-      "Assasinu Credi": 190
-    },
-    "kd_ratio": {
-      "Isgalamido": 0.99,
-      "Oootsimo": 0.91,
-      "Zeh": 0.75,
-      "Assasinu Credi": 0.62,
-      "Chessus": 0.6,
-      "Dono da Bola": 0.37,
-      "Mal": 0.07,
-      "Mocinha": 0,
-      "Fasano Again": 0,
-      "UnnamedPlayer": 0,
-      "Maluquinho": 0,
-      "Chessus!": 0
-    },
-    "player_score": {
-      "Isgalamido": 156.9,
-      "Zeh": 131.5,
-      "Oootsimo": 123.1,
-      "Assasinu Credi": 117.2,
-      "Dono da Bola": 66.7,
-      "Chessus": 39,
-      "Mocinha": 0,
-      "Maluquinho": 0,
-      "Fasano Again": 0,
-      "UnnamedPlayer": 0,
-      "Chessus!": 0,
-      "Mal": -2.3
+  {
+    "playerRanking": {
+      "kills": {
+        "Isgalamido": 147,
+        "Zeh": 124,
+        "Oootsimo": 114,
+        "Assasinu Credi": 111,
+        "Dono da Bola": 63,
+        "Chessus": 33,
+        "Mocinha": 0,
+        "Maluquinho": 0,
+        "Fasano Again": 0,
+        "UnnamedPlayer": 0,
+        "Chessus!": 0,
+        "Mal": -3
+      },
+      "deaths": {
+        "Fasano Again": 0,
+        "Chessus!": 0,
+        "UnnamedPlayer": 1,
+        "Maluquinho": 1,
+        "Mocinha": 2,
+        "Chessus": 55,
+        "Oootsimo": 127,
+        "Isgalamido": 153,
+        "Zeh": 173,
+        "Mal": 178,
+        "Dono da Bola": 189,
+        "Assasinu Credi": 190
+      },
+      "kd_ratio": {
+        "Isgalamido": 0.99,
+        "Oootsimo": 0.91,
+        "Zeh": 0.75,
+        "Assasinu Credi": 0.62,
+        "Chessus": 0.6,
+        "Dono da Bola": 0.37,
+        "Mal": 0.07,
+        "Mocinha": 0,
+        "Fasano Again": 0,
+        "UnnamedPlayer": 0,
+        "Maluquinho": 0,
+        "Chessus!": 0
+      },
+      "player_score": {
+        "Isgalamido": 156.9,
+        "Zeh": 131.5,
+        "Oootsimo": 123.1,
+        "Assasinu Credi": 117.2,
+        "Dono da Bola": 66.7,
+        "Chessus": 39,
+        "Mocinha": 0,
+        "Maluquinho": 0,
+        "Fasano Again": 0,
+        "UnnamedPlayer": 0,
+        "Chessus!": 0,
+        "Mal": -2.3
+      }
     }
   }
-}
 ```
   
 
@@ -187,7 +187,7 @@ This API has been developed to consume and analyze log information from Quake ga
 
 The API provides a series of important indicators, tailored to the rules and context of each Quake championship. Our focus is to simplify access to fundamental information that is indispensable for game analysis.
 
-#### Available Metrics per Match
+### Available Metrics per Match
   
 For each match, we provide the following information and metrics:
   
@@ -198,7 +198,7 @@ For each match, we provide the following information and metrics:
 - **KD Ratio:** Kill-to-death ratio, a common indicator in Quake, ranked by best performance.
 - **Player Score:** Efficiency score calculated based on kills and KD Ratio, ranked by the player with the best score/performance.
 
-#### Available Metrics Across Matches (Player Ranking)
+### Available Metrics Across Matches (Player Ranking)
 
 In addition to the metrics from each individual match, the API also compiles an overall ranking of players throughout the tournament, allowing analyses of player evolution and consistency.
 
@@ -247,7 +247,7 @@ Using the available metrics across matches, it is possible to develop interfaces
 
 ## Ranking metrics 
 
-#### K/D Ratio (Kill/Death Ratio)
+### K/D Ratio (Kill/Death Ratio)
   
 The KD Ratio, or Kill/Death Ratio, is a common metric in competitive gaming, especially in shooters and real-time strategy games. It represents the ratio between the number of eliminations (kills) a player achieves and the number of times they are eliminated (deaths) in a match. 
   
@@ -278,7 +278,7 @@ The player dies more often than they kill, indicating they may be facing difficu
 The player has significant difficulties in the game, dying frequently without managing many eliminations.
   
 
-#### Player Score (K/D Ratio+Kills)
+### Player Score (K/D Ratio+Kills)
   
 The efficiency score, based on the KD Ratio and kills, is another important metric that helps evaluate a player's overall performance beyond just the number of eliminations and deaths. This score combines the KD Ratio with the total number of eliminations to produce a score that reflects both the effectiveness and aggressiveness of the player. For example, a player with many eliminations but also many deaths might have a moderate KD Ratio, but a high efficiency score due to the high number of eliminations, highlighting their significant impact and contribution to the matches. 
   
