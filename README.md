@@ -19,13 +19,13 @@ docker-compose up -d
 
 ## Endpoints
 
-#### URL Request Route for Game Report (no body request):
+#### Request URL for Game Report (no body request):
 
 ```
 GET: http://{url}:3000/api/report     
 ```
 
-#### URL Request Route for Player Ranking (no body request):
+#### Request URL for Player Ranking (no body request):
 
 ```
 GET: http://{url}:3000/api/ranking     
@@ -35,7 +35,7 @@ GET: http://{url}:3000/api/ranking
 
 ![API Response](src/media/VideoQuakeLogAPI.gif)
     
-#### Body Response Route for Game Report from `/api/report` (status code 200):   
+#### Response Body for `/api/report` (Status Code 200):   
       
 ```json
   {
@@ -76,7 +76,7 @@ GET: http://{url}:3000/api/ranking
   }
 ```
    
-#### Body Response Route for Player Ranking from `/api/ranking` (status code 200):     
+#### Response Body for `/api/ranking` (Status Code 200):     
        
 ```json
   {
