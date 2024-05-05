@@ -171,7 +171,7 @@ In addition to the metrics from each individual match, the API also compiles an 
 - **KD Ratio:** List of players ranked by the best performance in the KD Ratio indicator across all matches.
 - **Player Score:** List of players ranked by the best performance, taking into account the KD Ratio and the number of kills in all matches.
   
-Using the general metrics, it is possible to develop interfaces that display the individual ranking of each metric or even the player score, which is commonly used in tournaments.
+Using the available metrics across matches, it is possible to develop interfaces that display the individual ranking of each metric or even the player score, which is commonly used in tournaments.
 
 <table>
 <tr>
@@ -224,5 +224,22 @@ The efficiency score, based on the KD Ratio and kills, is another important metr
   
 In our API, we use a weight of 10 in calculating this score to emphasize the value of eliminations, reflecting the importance of offensive actions within the game context. This weighting helps identify players who not only avoid being eliminated but also actively contribute to the team's success through offensive actions.
 
+  
 
+# Future Technical Implementations
 
+- **Automated Testing:** Introducing automated testing is crucial in business contexts involving complex calculations and modular functionalities, such as this Quake log reading application, where data accuracy and integrity are essential. Testing ensures that features function correctly, minimizing failures. For effective implementation of these tests, tools like Jest and Vitest can be utilized.
+
+- **API Authentication and Authorization:** To ensure that only authorized users access the API, it is essential to add an authentication header to each request. Using libraries such as JWT (JSON Web Tokens) is an effective practice for managing these authentications. Furthermore, integrating authentication with an API Gateway to issue authorization tokens and adopting advanced practices, such as using asymmetric keys, is crucial for maintaining access security.
+
+- **Application Architecture:** In scenarios where data consumption occurs via streaming, such as the Quake game logs, it is advisable to adapt the application to an event-driven architecture to increase flexibility and scalability. This facilitates communication with microservices in clients operating under Single Page Applications (SPA) models, like React or Angular. This approach not only enhances efficiency in real-time data management but also supports easier expansion as new services or features are integrated.
+
+- **Monitoring and Observability:** Initially, monitoring with the PM2 library may suffice to track request consumption. For larger contexts, it is recommended to implement tools like Sentry for error tracking and performance monitoring. Observability tools such as Prometheus, Grafana, or Datadog can be integrated to provide deeper insights into the application's health and performance.
+
+- **Cloud Services:** It is advisable to deploy the application in a reliable, secure, and scalable server environment, such as a Linux instance on AWS EC2, which offers the flexibility to operate under varying load demands. Continuous monitoring of the application is essential to identify future needs and optimize costs. In addition to EC2, we are exploring cost-efficient serverless solutions, such as AWS Lambda, which charge based on usage. We are also considering the use of additional AWS services to support greater scale and data volume, such as S3 for log storage, RDS for database management, SQS for messaging, and DynamoDB for NoSQL storage solutions. This multifaceted approach ensures flexibility and scalability, adjusting to the evolving needs of the project.
+
+- **Continuous Integration and Delivery (CI/CD):** Implementing continuous integration and delivery is essential to automate deployments. Utilizing tools like GitHub Actions to configure pipelines according to Gitflow branches, covering testing, staging, and production, optimizes the development and deployment process.
+
+- **Load Balancer and API Clustering:** Implementing a load balancer using the Node.js PM2 library helps manage and balance traffic loads across application instances, making smarter use of CPUs. This facilitates horizontal scalability of the application on the same server, allowing Node.js's single-thread architecture to handle asynchronous request management more efficiently and make smarter use of available resources.
+
+- **Infrastructure Security Layer:** Utilizing services like Cloudflare for content distribution (CDN) can significantly improve application latency for a richer user experience. Configuring DNS and TLS/SSL for end-to-end traffic reliability and including a firewall (WAF) helps manage this traffic more securely, identifying potential attacks before they reach the server, further protecting the server side of the application.
