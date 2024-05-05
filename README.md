@@ -9,11 +9,7 @@ Project to parse the Quake log file.
 
 ## Get started
 
-```bash 
-yarn  
-or
-npm install
-   
+```bash    
 docker-compose up -d
 ```
 
