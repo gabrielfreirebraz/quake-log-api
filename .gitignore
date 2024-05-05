@@ -17,6 +17,7 @@ yarn.lock
 
 # Arquivos de log
 *.log
+!index.log
 
 # Outros arquivos específicos do ambiente de desenvolvimento
 .vscode/

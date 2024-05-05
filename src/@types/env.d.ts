@@ -1,7 +1,8 @@
 declare namespace NodeJS {
     interface ProcessEnv {
       PORT: string;
-      DOWNLOAD_URL_LOG: string;
-      LOCAL_FILE_LOG: string
+      EXTERNAL_URL_LOG_QGAMES: string;
+      LOCAL_FILE_LOG_QGAMES: string;
+      LOCAL_FILE_LOG_ERRORS: string;
     }
   }

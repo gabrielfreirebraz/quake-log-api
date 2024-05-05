@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import fs from 'fs'
 import readline from 'readline'
-// import createError from 'http-errors';
+import createError from 'http-errors';
 import 'dotenv/config'
 
 import { Stream } from 'stream';
@@ -22,8 +22,8 @@ const loadExternalFile = async (endpointFile: string): Promise<AxiosResponse<Str
 }
 
 const downloadFile = async (): Promise<fs.WriteStream> => {
-    const responseLogs: AxiosResponse<Stream> = await loadExternalFile(process.env.DOWNLOAD_URL_LOG!);
-    const modelWriterStream: fs.WriteStream = writeStreamLogFile(process.env.LOCAL_FILE_LOG!);
+    const responseLogs: AxiosResponse<Stream> = await loadExternalFile(process.env.EXTERNAL_URL_LOG_QGAMES!);
+    const modelWriterStream: fs.WriteStream = writeStreamLogFile(process.env.LOCAL_FILE_LOG_QGAMES!);
 
     responseLogs.data.pipe(modelWriterStream);
 
@@ -36,7 +36,7 @@ const handleStream_DownloadLog_and_CreateReport = async (stream: fs.WriteStream)
         stream.on('finish', () => {
             console.log('Downloaded file.');
 
-            const modelReaderStream: readline.Interface = readerStreamLogFile(process.env.LOCAL_FILE_LOG!);
+            const modelReaderStream: readline.Interface = readerStreamLogFile(process.env.LOCAL_FILE_LOG_QGAMES!);
 
             handleStream_CreateReport(
                 modelReaderStream,
@@ -46,7 +46,7 @@ const handleStream_DownloadLog_and_CreateReport = async (stream: fs.WriteStream)
         });
         stream.on('error', (err) => {
             console.error('Error to write in file:', err);
-            reject(err);
+            reject(createError(500, err));
 
             //throw createError(500, 'Error to write in file')
         });
@@ -187,7 +187,7 @@ const handleStream_CreateReport = (readerStream: readline.Interface, successCall
     // ---------
     readerStream.on('error', (err) => {
         console.error('Read file error:', err);
-        errorCallback(err);
+        errorCallback(createError(500, err));
 
         //throw createError(500, 'Read file error')        
     });  
